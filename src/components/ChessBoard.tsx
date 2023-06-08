@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react"
+import { useChessContext } from "../context/chessContext";
 
 type boardBox = {
     position: string,
     color: string,
+    occupied: boolean
 }
 
 const ChessBoard = () => {
@@ -12,6 +14,7 @@ const ChessBoard = () => {
     const vertical = [1, 2, 3, 4, 5, 6, 7, 8];
     const horizontal = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
 
+    // On mount create the board
     useEffect(() => {
 
         const boardArray:boardBox[] = [];
@@ -22,7 +25,8 @@ const ChessBoard = () => {
 
                 const boardItemObject: boardBox = {
                     position: `${horizontal[j]}${vertical[i]}`,
-                    color: ''
+                    color: '',
+                    occupied: false
                 }
 
                 // Double even === dark
@@ -53,8 +57,8 @@ const ChessBoard = () => {
             {board.map((box, i) => {
                 return (
                     <div key={i} id={box.position} className={`flex justify-center items-center w-full h-full border border-slate-950
-                        ${box.color === 'dark' ? 'bg-slate-700' : 'bg-slate-100'}`}
-                    ></div>
+                        ${box.color === 'dark' ? 'bg-slate-700 text-white' : 'bg-slate-100 text-black'}`}
+                    >{box.position}</div>
                 )
             })}
 
