@@ -5,7 +5,15 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      "width": {
+        "screen-1/2": "50vw"
+      },
+      "height": {
+        "screen-1/2": "50vh",
+        "boardHeight": "50vw",
+      }
+    },
   },
   plugins: [],
 }
