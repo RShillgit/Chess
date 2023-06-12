@@ -7,22 +7,23 @@ export function createUser(player: string): Player {
     const savedPlayer = localStorage.getItem(player);
 
     if (savedPlayer) {
-        console.log(savedPlayer)
 
-        // TODO: Change this to the local storage item
-        return {
-            pieces: [],
-            turn: true
-        }
+        const parsedPlayer = JSON.parse(savedPlayer) as Player;
+        
+        return parsedPlayer;
     }
 
     else {
         const initialPieces = generateInitialPieces(player);
 
-        return {
+        const newPlayer = {
             pieces: initialPieces,
             turn: (player === 'user' ? true : false)
         }
+
+        localStorage.setItem(player, JSON.stringify(newPlayer));
+
+        return newPlayer;
     }
 
 

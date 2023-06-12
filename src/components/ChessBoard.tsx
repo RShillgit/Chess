@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { ReactNode, useEffect, useState } from "react"
 import { useChessContext } from "../context/chessContext";
 
 type boardBox = {
@@ -8,6 +8,8 @@ type boardBox = {
 }
 
 const ChessBoard = () => {
+
+    const { user, ai } = useChessContext();
 
     const [board, setBoard] = useState<boardBox[]>([]);
 
@@ -51,6 +53,19 @@ const ChessBoard = () => {
 
     }, [])
 
+    // Checks if piece exists on location
+    const checkPieceLocation = (position: string) => {
+
+        const userPieceExists = user.pieces.find(piece => piece.position === position);
+        const aiPieceExists = ai.pieces.find(piece => piece.position === position);
+
+        if (userPieceExists || aiPieceExists) {
+            return (
+                <div className="bg-black w-1/2 h-1/2 rounded-full"></div>
+            )
+        }
+    }
+
     return (
         <div className="p-4 grid justify-items-center items-center grid-cols-8 w-screen-1/2 h-boardHeight ">
 
@@ -58,7 +73,11 @@ const ChessBoard = () => {
                 return (
                     <div key={i} id={box.position} className={`flex justify-center items-center w-full h-full border border-slate-950
                         ${box.color === 'dark' ? 'bg-slate-700 text-white' : 'bg-slate-100 text-black'}`}
-                    >{box.position}</div>
+                    >{box.position}
+
+                        {checkPieceLocation(box.position)}
+                    
+                    </div>
                 )
             })}
 
