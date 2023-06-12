@@ -1,5 +1,6 @@
 import { ReactNode, useEffect, useState } from "react"
 import { useChessContext } from "../context/chessContext";
+import { Piece } from "../types/chessTypes";
 
 type boardBox = {
     position: string,
@@ -59,11 +60,26 @@ const ChessBoard = () => {
         const userPieceExists = user.pieces.find(piece => piece.position === position);
         const aiPieceExists = ai.pieces.find(piece => piece.position === position);
 
-        if (userPieceExists || aiPieceExists) {
+        if (userPieceExists ) {
             return (
-                <div className="bg-black w-1/2 h-1/2 rounded-full"></div>
+                <div className="bg-white w-1/2 h-1/2 border-4 border-white rounded-full cursor-pointer hover:border-yellow-500 focus:bg-red-700"
+                    onClick={(e) => selectChessPiece(e, userPieceExists)}
+                >
+                </div>
             )
         }
+        else if (aiPieceExists) {
+            return (
+                <div className="bg-black w-1/2 h-1/2 border-4 border-black rounded-full"></div>
+            )
+        }
+    }
+
+    // Onclick selection for chess piece
+    const selectChessPiece = (e: React.MouseEvent, piece: Piece) => {
+
+        console.log(piece)
+
     }
 
     return (
@@ -72,7 +88,7 @@ const ChessBoard = () => {
             {board.map((box, i) => {
                 return (
                     <div key={i} id={box.position} className={`flex justify-center items-center w-full h-full border border-slate-950
-                        ${box.color === 'dark' ? 'bg-slate-700 text-white' : 'bg-slate-100 text-black'}`}
+                        ${box.color === 'dark' ? 'bg-slate-800 text-white' : 'bg-slate-400 text-black'}`}
                     >{box.position}
 
                         {checkPieceLocation(box.position)}
