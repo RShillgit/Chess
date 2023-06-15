@@ -66,6 +66,7 @@ const ChessBoard = () => {
                     id={`piece-${userPieceExists.position}`}
                     onClick={() => selectPiece(userPieceExists)}
                 >
+                    <p className="text-xs text-black">{userPieceExists.type}</p>
                 </div>
             )
         }
@@ -76,6 +77,26 @@ const ChessBoard = () => {
         }
     }
 
+    // Board box hover to show if peice can move there or not
+    const checkViableMove = (e: React.MouseEvent) => {
+
+        // If a piece is selected
+        if (selectedChessPiece) {
+
+            // Box contains one of user's pieces
+            const userPieceExists = user.pieces.find(piece => piece.position === e.currentTarget.id);
+            if (userPieceExists) return;
+
+            const moveViable = selectedChessPiece.canMove(e.currentTarget.id)
+            
+            // Red if the piece cannot go there
+            console.log(moveViable)
+
+            // Green if piece can go there
+        }
+
+    }
+
     return (
         <div className="p-4 grid justify-items-center items-center grid-cols-8 w-screen-1/2 h-boardHeight ">
 
@@ -83,6 +104,7 @@ const ChessBoard = () => {
                 return (
                     <div key={i} id={box.position} className={`flex justify-center items-center w-full h-full border border-slate-950
                         ${box.color === 'dark' ? 'bg-slate-800 text-white' : 'bg-slate-400 text-black'}`}
+                        onMouseOver={(e) => checkViableMove(e)}
                     >{box.position}
 
                         {checkPieceLocation(box.position)}

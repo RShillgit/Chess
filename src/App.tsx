@@ -55,7 +55,7 @@ const App = () => {
 
   return (
     <div>
-      <h1 className="flex justify-center text-3xl">Chess</h1>
+      <h1 className="flex justify-center text-3xl translate-y-">Chess</h1>
 
       <div className="flex justify-center">
         <ChessBoard />

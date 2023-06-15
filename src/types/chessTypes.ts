@@ -3,7 +3,9 @@ export type Piece = {
   type: string,
   owner: string,
   alive: boolean,
-  position: string
+  position: string,
+  canMove: (location: string) => boolean,
+  move: (location: string) => void,
 }
 
 export type Player = {

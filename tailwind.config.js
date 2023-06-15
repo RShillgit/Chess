@@ -12,7 +12,10 @@ export default {
       "height": {
         "screen-1/2": "50vh",
         "boardHeight": "50vw",
-      }
+      },
+      "dropShadow": {
+        "selected-piece": "-5px 5px 5px black"
+      },
     },
   },
   plugins: [],

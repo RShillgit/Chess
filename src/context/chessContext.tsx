@@ -32,7 +32,10 @@ export function ChessContextProvider( { children }: ChessContextProviderProps ) 
 
     const selectPiece = (piece: Piece | null) => {
 
-        const selectedPieceStyles = ["bg-yellow-500", "border-yellow-500", "scale-125"]
+        const selectedPieceStyles = [
+            "bg-yellow-500", "border-yellow-500", "scale-125", "drop-shadow-selected-piece", 
+            "translate-x-1", "-translate-y-1"
+        ];
 
         if (piece) {
             setSelectedChessPiece((prevPiece) => {
