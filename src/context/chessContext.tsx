@@ -11,6 +11,7 @@ type ChessContext = {
     ai: Player,
     selectedChessPiece: (Piece | null),
     selectPiece: (piece: Piece | null) => void,
+    moveChessPiece: (newPosition: string) => void,
 }
 
 const chessContext = createContext({} as ChessContext)
@@ -25,10 +26,6 @@ export function ChessContextProvider( { children }: ChessContextProviderProps ) 
     const [user, setUser] = useState<Player>(() => createUser('user'));
     const [ai, setAi] = useState<Player>(() => createUser('ai'));
     const [selectedChessPiece, setSelectedChessPiece] = useState<Piece | null>(null);
-
-    useEffect(() => {
-        console.log(selectedChessPiece)
-    }, [selectedChessPiece])
 
     const selectPiece = (piece: Piece | null) => {
 
@@ -59,14 +56,33 @@ export function ChessContextProvider( { children }: ChessContextProviderProps ) 
         }
     }
 
-    /*
-    const moveChessPiece = () => {
+    const moveChessPiece = (newPosition: string) => {
 
+        // Move selected piece
+        selectedChessPiece?.move(newPosition);
+        
+        // Update user
+        setUser(prevUser => {
+
+            // Find and update selected piece
+            const changedPiece = prevUser.pieces.find(piece => piece === selectedChessPiece)
+
+            if (changedPiece) {
+                changedPiece.position = newPosition
+            }
+
+            // Update local storage
+            localStorage.setItem('user', JSON.stringify(prevUser));
+            return prevUser;
+
+        })
+
+        setSelectedChessPiece(null);
     }
-    */
+
 
     return (
-        <chessContext.Provider value={{user, ai, selectedChessPiece, selectPiece}} >
+        <chessContext.Provider value={{user, ai, selectedChessPiece, selectPiece, moveChessPiece}} >
             {children}
         </chessContext.Provider>
     )

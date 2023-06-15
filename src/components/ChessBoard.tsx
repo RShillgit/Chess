@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useState } from "react"
+import React, { ReactNode, useEffect, useState } from "react"
 import { useChessContext } from "../context/chessContext";
 import { Piece } from "../types/chessTypes";
 
@@ -10,7 +10,7 @@ type boardBox = {
 
 const ChessBoard = () => {
 
-    const { user, ai, selectPiece, selectedChessPiece } = useChessContext();
+    const { user, ai, selectPiece, selectedChessPiece, moveChessPiece } = useChessContext();
 
     const [board, setBoard] = useState<boardBox[]>([]);
 
@@ -85,16 +85,35 @@ const ChessBoard = () => {
 
             // Box contains one of user's pieces
             const userPieceExists = user.pieces.find(piece => piece.position === e.currentTarget.id);
-            if (userPieceExists) return;
+            if (userPieceExists) return false;
 
             const moveViable = selectedChessPiece.canMove(e.currentTarget.id)
             
-            // Red if the piece cannot go there
-            console.log(moveViable)
-
             // Green if piece can go there
+            if (moveViable) {
+                e.currentTarget.classList.add("hover:shadow-valid-hover", "cursor-pointer", "hover:relative", "hover:z-10");
+                return true;
+            }
+            // Red if the piece cannot go there
+            else {
+                e.currentTarget.classList.add("hover:shadow-invalid-hover", "cursor-pointer", "hover:relative", "hover:z-10");
+                return false;
+            }
         }
+        // Else Remove hover classes from target and return false
+        e.currentTarget.classList.remove("hover:shadow-valid-hover", "hover:shadow-invalid-hover",
+            "hover:relative", "hover:z-10", "cursor-pointer")
+        return false;
+    }
 
+    // Moves chess piece to desired location
+    const movePiece = (e: React.MouseEvent) => {
+
+        if (selectedChessPiece) {
+            if(checkViableMove(e)) {
+                moveChessPiece(e.currentTarget.id);
+            }
+        }
     }
 
     return (
@@ -105,6 +124,14 @@ const ChessBoard = () => {
                     <div key={i} id={box.position} className={`flex justify-center items-center w-full h-full border border-slate-950
                         ${box.color === 'dark' ? 'bg-slate-800 text-white' : 'bg-slate-400 text-black'}`}
                         onMouseOver={(e) => checkViableMove(e)}
+                        onMouseOut={(e) => {
+                                if (selectedChessPiece) {
+                                    e.currentTarget.classList.remove("hover:shadow-valid-hover", "hover:shadow-invalid-hover",
+                                    "hover:relative", "hover:z-10", "cursor-pointer")
+                                }
+                            }
+                        }
+                        onClick={(e) => movePiece(e)}
                     >{box.position}
 
                         {checkPieceLocation(box.position)}

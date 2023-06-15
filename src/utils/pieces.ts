@@ -15,14 +15,38 @@ export function Pawn(player: string, position: string): Piece {
 
         // Checks if piece can move to the location
         canMove: (location: string) => {
-            console.log(`can I move to ${location}?`);
 
-            return false;
+            // Unmoved pawn can move 1 or 2 spaces
+            if (Number(position[1]) === 2) {
+
+                // Hovering in the same column
+                if (location[0] === position[0]) {
+
+                    // Hovering in row 3 or 4
+                    if (Number(location[1]) === 3 || Number(location[1]) === 4) return true;
+                    return false;
+
+                } else return false;
+            }
+
+            // can only move 1 space
+            else {
+
+                // Hovering in the same column
+                if (location[0] === position[0]) {
+
+                    // Hovering 1 row higher
+                    if (Number(position[1]) + 1 === Number(location[1])) return true
+                    return false;
+
+                } else return false;
+
+            }
         },
 
         // Moves piece to the location
         move: (location: string) => {
-            console.log(`move to location: ${location}`);
+            position = location;
         }
 
     }

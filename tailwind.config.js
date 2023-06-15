@@ -16,6 +16,10 @@ export default {
       "dropShadow": {
         "selected-piece": "-5px 5px 5px black"
       },
+      "boxShadow": {
+        "valid-hover": "0 0 5px 5px limegreen",
+        "invalid-hover": "0 0 5px 5px red"
+      }
     },
   },
   plugins: [],
