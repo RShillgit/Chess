@@ -9,6 +9,8 @@ type ChessContextProviderProps = {
 type ChessContext = {
     user: Player,
     ai: Player,
+    selectedChessPiece: (Piece | null),
+    selectPiece: (piece: Piece | null) => void,
 }
 
 const chessContext = createContext({} as ChessContext)
@@ -22,6 +24,37 @@ export function ChessContextProvider( { children }: ChessContextProviderProps ) 
     // User & Ai
     const [user, setUser] = useState<Player>(() => createUser('user'));
     const [ai, setAi] = useState<Player>(() => createUser('ai'));
+    const [selectedChessPiece, setSelectedChessPiece] = useState<Piece | null>(null);
+
+    useEffect(() => {
+        console.log(selectedChessPiece)
+    }, [selectedChessPiece])
+
+    const selectPiece = (piece: Piece | null) => {
+
+        const selectedPieceStyles = ["bg-yellow-500", "border-yellow-500", "scale-125"]
+
+        if (piece) {
+            setSelectedChessPiece((prevPiece) => {
+                if(prevPiece) {
+                    const prevSelectedPiece = document.getElementById(`piece-${prevPiece.position}`);
+                    prevSelectedPiece?.classList.remove(...selectedPieceStyles);
+                }
+                const chessPiece = document.getElementById(`piece-${piece.position}`);
+                chessPiece?.classList.add(...selectedPieceStyles);
+                return piece;
+            })
+        } else {
+            setSelectedChessPiece((prevPiece) => {
+                if(prevPiece) {
+                    const prevSelectedPiece = document.getElementById(`piece-${prevPiece.position}`);
+                    prevSelectedPiece?.classList.remove(...selectedPieceStyles);
+
+                }
+                return null;
+            })
+        }
+    }
 
     /*
     const moveChessPiece = () => {
@@ -30,7 +63,7 @@ export function ChessContextProvider( { children }: ChessContextProviderProps ) 
     */
 
     return (
-        <chessContext.Provider value={{user, ai}} >
+        <chessContext.Provider value={{user, ai, selectedChessPiece, selectPiece}} >
             {children}
         </chessContext.Provider>
     )

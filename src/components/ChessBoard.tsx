@@ -10,7 +10,7 @@ type boardBox = {
 
 const ChessBoard = () => {
 
-    const { user, ai } = useChessContext();
+    const { user, ai, selectPiece, selectedChessPiece } = useChessContext();
 
     const [board, setBoard] = useState<boardBox[]>([]);
 
@@ -63,7 +63,8 @@ const ChessBoard = () => {
         if (userPieceExists ) {
             return (
                 <div className="bg-white w-1/2 h-1/2 border-4 border-white rounded-full cursor-pointer hover:border-yellow-500 focus:bg-red-700"
-                    onClick={(e) => selectChessPiece(e, userPieceExists)}
+                    id={`piece-${userPieceExists.position}`}
+                    onClick={() => selectPiece(userPieceExists)}
                 >
                 </div>
             )
@@ -73,13 +74,6 @@ const ChessBoard = () => {
                 <div className="bg-black w-1/2 h-1/2 border-4 border-black rounded-full"></div>
             )
         }
-    }
-
-    // Onclick selection for chess piece
-    const selectChessPiece = (e: React.MouseEvent, piece: Piece) => {
-
-        console.log(piece)
-
     }
 
     return (

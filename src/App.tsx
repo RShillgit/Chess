@@ -46,7 +46,7 @@ const App = () => {
           
   */
 
-  const { user, ai } = useChessContext();
+  const { user, ai, selectedChessPiece, selectPiece } = useChessContext();
 
   useEffect(() => {
     console.log("user", user)
@@ -60,6 +60,7 @@ const App = () => {
       <div className="flex justify-center">
         <ChessBoard />
       </div>
+
     </div>
   )
 

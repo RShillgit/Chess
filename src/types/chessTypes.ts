@@ -1,8 +1,9 @@
 export type Piece = {
-    type: string,
-    owner: string,
-    alive: boolean,
-    position: string
+  id: string,
+  type: string,
+  owner: string,
+  alive: boolean,
+  position: string
 }
 
 export type Player = {
