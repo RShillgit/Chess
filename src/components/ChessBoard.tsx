@@ -60,20 +60,26 @@ const ChessBoard = () => {
         const userPieceExists = user.pieces.find(piece => piece.position === position);
         const aiPieceExists = ai.pieces.find(piece => piece.position === position);
 
-        if (userPieceExists ) {
-            return (
-                <div className="bg-white w-1/2 h-1/2 border-4 border-white rounded-full cursor-pointer hover:border-yellow-500 focus:bg-red-700"
-                    id={`piece-${userPieceExists.position}`}
-                    onClick={() => selectPiece(userPieceExists)}
-                >
-                    <p className="text-xs text-black">{userPieceExists.type}</p>
-                </div>
-            )
+        if (userPieceExists) {
+
+            if (userPieceExists.alive) {
+                return (
+                    <div className="bg-white w-1/2 h-1/2 border-4 border-white rounded-full cursor-pointer hover:border-yellow-500 focus:bg-red-700"
+                        id={`piece-${userPieceExists.position}`}
+                        onClick={() => selectPiece(userPieceExists)}
+                    >
+                        <p className="text-xs text-black">{userPieceExists.type}</p>
+                    </div>
+                )
+            }
+
         }
         else if (aiPieceExists) {
-            return (
-                <div className="bg-black w-1/2 h-1/2 border-4 border-black rounded-full"></div>
-            )
+            if(aiPieceExists.alive) {
+                return (
+                    <div className="bg-black w-1/2 h-1/2 border-4 border-black rounded-full"></div>
+                )
+            }
         }
     }
 
@@ -120,7 +126,7 @@ const ChessBoard = () => {
         <div className="p-4 grid justify-items-center items-center grid-cols-8 w-screen-1/2 h-boardHeight ">
 
             {board.map((box, i) => {
-                return (
+                return (   
                     <div key={i} id={box.position} className={`flex justify-center items-center w-full h-full border border-slate-950
                         ${box.color === 'dark' ? 'bg-slate-800 text-white' : 'bg-slate-400 text-black'}`}
                         onMouseOver={(e) => checkViableMove(e)}

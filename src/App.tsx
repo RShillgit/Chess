@@ -48,17 +48,80 @@ const App = () => {
 
   const { user, ai, selectedChessPiece, selectPiece } = useChessContext();
 
+  const graveyardStyles = [
+    ""
+  ];
+
   useEffect(() => {
     console.log(user)
     console.log(ai)
   }, [])
 
+  // Displays dead pieces
+  const pieceGraveyard = (player: 'user' | 'ai') => {
+
+    if (player === 'user') {
+
+      return (
+        <div className="grid grid-cols-2 gap-1">
+          {user.pieces.map(piece => {
+            if (!piece.alive) {
+              return (
+                <div key={piece.id} className="flex justify-center items-center bg-white w-10 h-10 border-4 border-white 
+                  rounded-full text-black text-xs"
+                >
+                  {piece.type}
+                </div>
+              )
+            } 
+          })}
+        </div>
+      )
+
+    }
+    else if (player === 'ai') {
+
+      return (
+        <div className="grid grid-cols-2 gap-1">
+          {ai.pieces.map(piece => {
+            if (!piece.alive) {
+              return (
+                <div key={piece.id} className="flex justify-center items-center bg-black w-10 h-10 border-4 border-black 
+                  rounded-full text-white text-xs"
+                >
+                  {piece.type}
+                </div>
+              )
+            } 
+          })}
+        </div>
+      )
+
+    }
+    else return <></>;
+
+  }
+
   return (
     <div>
       <h1 className="flex justify-center text-3xl translate-y-">Chess</h1>
 
-      <div className="flex justify-center">
-        <ChessBoard />
+      <div className="flex justify-center p-4">
+
+        <div className="py-4 pb-4">
+          <h1 className="text-2xl">You</h1>
+          {pieceGraveyard('user')}
+        </div>
+
+        <div className="flex justify-center">
+          <ChessBoard />
+        </div>
+
+        <div className="py-4 pb-4">
+          <h1 className="text-2xl">Enemy</h1>
+          {pieceGraveyard('ai')}
+        </div>
+
       </div>
 
     </div>
