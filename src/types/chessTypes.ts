@@ -4,11 +4,12 @@ export type Piece = {
   owner: string,
   alive: boolean,
   position: string,
-  canMove: (location: string) => boolean,
-  move: (location: string) => void,
+  canMove: (location: string, enemyPieces: Piece[]) => boolean,
+  move: (location: string, enemyPieces: Piece[]) => Piece[],
 }
 
 export type Player = {
+  name: string,
   pieces: Piece[],
   turn: boolean
 

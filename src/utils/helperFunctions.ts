@@ -11,12 +11,12 @@ export function createUser(player: string): Player {
         const parsedPlayer = JSON.parse(savedPlayer) as Player;
 
         const newPieces: Piece[] = parsedPlayer.pieces.map(piece => {
-            if (piece.type === 'pawn') return Pawn(piece.owner, piece.position);
-            else if (piece.type === 'rook') return Rook(piece.owner, piece.position);
-            else if (piece.type === 'knight') return Knight(piece.owner, piece.position);
-            else if (piece.type === 'bishop') return Bishop(piece.owner, piece.position);
-            else if (piece.type === 'queen') return Queen(piece.owner, piece.position);
-            else if (piece.type === 'king') return King(piece.owner, piece.position);
+            if (piece.type === 'pawn') return Pawn(piece.owner, piece.position, piece.alive);
+            else if (piece.type === 'rook') return Rook(piece.owner, piece.position, piece.alive);
+            else if (piece.type === 'knight') return Knight(piece.owner, piece.position, piece.alive);
+            else if (piece.type === 'bishop') return Bishop(piece.owner, piece.position, piece.alive);
+            else if (piece.type === 'queen') return Queen(piece.owner, piece.position, piece.alive);
+            else if (piece.type === 'king') return King(piece.owner, piece.position, piece.alive);
             else return piece;
         })
 
@@ -29,6 +29,7 @@ export function createUser(player: string): Player {
         const initialPieces = generateInitialPieces(player);
 
         const newPlayer = {
+            name: player,
             pieces: initialPieces,
             turn: (player === 'user' ? true : false)
         }

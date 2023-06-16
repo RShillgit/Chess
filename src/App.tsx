@@ -49,8 +49,8 @@ const App = () => {
   const { user, ai, selectedChessPiece, selectPiece } = useChessContext();
 
   useEffect(() => {
-    console.log("user", user)
-    console.log("ai", ai)
+    console.log(user)
+    console.log(ai)
   }, [])
 
   return (
