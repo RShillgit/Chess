@@ -1,6 +1,8 @@
 import { v4 as uuidv4 } from 'uuid';
 import { Piece } from '../types/chessTypes';
 
+// TODO: Extract move function so its only written in 1 place
+
 // Pawn
 export function Pawn(player: 'user' | 'ai', position: string, alive?: boolean): Piece {
 
@@ -209,14 +211,21 @@ export function Bishop(player: 'user' | 'ai', position: string, alive?: boolean)
 
         // Checks if piece can move to the location
         canMove: (location: string, enemyPieces: Piece[], usersPieces: Piece[]) => {
-            console.log(`can I move to ${location}?`);
+
+            // Diagonal/equal in x and y directions
+            if(pieceInPath('diagonal', position, location, enemyPieces, usersPieces)) return false;
+            if (Math.abs(location[0].charCodeAt(0) - position[0].charCodeAt(0)) === Math.abs(Number(location[1]) - Number(position[1]))) return true;
 
             return false;
         },
 
         // Moves piece to the location
         move: (location: string, enemyPieces: Piece[]) => {
-            console.log(`move to location: ${location}`);
+            // If there is an enemy at this location, eliminate them
+            const enemy = enemyPieces.find(piece => piece.position === location)
+            if (enemy) enemy.alive = false;
+
+            position = location;
 
             return enemyPieces;
         }
@@ -242,7 +251,11 @@ export function Queen(player: 'user' | 'ai', position: string, alive?: boolean):
 
         // Moves piece to the location
         move: (location: string, enemyPieces: Piece[]) => {
-            console.log(`move to location: ${location}`);
+            // If there is an enemy at this location, eliminate them
+            const enemy = enemyPieces.find(piece => piece.position === location)
+            if (enemy) enemy.alive = false;
+
+            position = location;
 
             return enemyPieces;
         }
@@ -268,7 +281,11 @@ export function King(player: 'user' | 'ai', position: string, alive?: boolean): 
 
         // Moves piece to the location
         move: (location: string, enemyPieces: Piece[]) => {
-            console.log(`move to location: ${location}`);
+            // If there is an enemy at this location, eliminate them
+            const enemy = enemyPieces.find(piece => piece.position === location)
+            if (enemy) enemy.alive = false;
+
+            position = location;
 
             return enemyPieces;
         }
@@ -305,8 +322,28 @@ function pieceInPath (path: 'column' | 'row' | 'diagonal', position: string, loc
         })
     }
 
-    // TODO: Diagonal
+    // Diagonal
+    else if (path === 'diagonal') {
+        pieceInbetween = allPieces.find(piece => {
+            // Equal in x and y directions
+            if (Math.abs(piece.position[0].charCodeAt(0) - position[0].charCodeAt(0)) === Math.abs(Number(piece.position[1]) - Number(position[1]))) {
 
+                if (piece.alive && position[0].charCodeAt(0) < piece.position[0].charCodeAt(0) && piece.position[0].charCodeAt(0) < location[0].charCodeAt(0)
+                    && Number(position[1]) < Number(piece.position[1]) && Number(piece.position[1]) < Number(location[1]) 
+                ) return true;
+                else if (piece.alive && position[0].charCodeAt(0) < piece.position[0].charCodeAt(0) && piece.position[0].charCodeAt(0) < location[0].charCodeAt(0)
+                    && Number(position[1]) > Number(piece.position[1]) && Number(piece.position[1]) > Number(location[1]) 
+                ) return true;
+                else if (piece.alive && position[0].charCodeAt(0) > piece.position[0].charCodeAt(0) && piece.position[0].charCodeAt(0) > location[0].charCodeAt(0)
+                    && Number(position[1]) > Number(piece.position[1]) && Number(piece.position[1]) > Number(location[1]) 
+                ) return true;
+                else if (piece.alive && position[0].charCodeAt(0) > piece.position[0].charCodeAt(0) && piece.position[0].charCodeAt(0) > location[0].charCodeAt(0)
+                    && Number(position[1]) < Number(piece.position[1]) && Number(piece.position[1]) < Number(location[1]) 
+                ) return true;
+
+            }
+        })
+    }
 
     if (pieceInbetween) return true;
     return false;
