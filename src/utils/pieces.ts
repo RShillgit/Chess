@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { Piece } from '../types/chessTypes';
 
 // Pawn
-export function Pawn(player: string, position: string, alive?: boolean): Piece {
+export function Pawn(player: 'user' | 'ai', position: string, alive?: boolean): Piece {
 
     return {
         id: uuidv4(),
@@ -92,7 +92,7 @@ export function Pawn(player: string, position: string, alive?: boolean): Piece {
 }
 
 // Rook
-export function Rook(player: string, position: string, alive?: boolean): Piece {
+export function Rook(player: 'user' | 'ai', position: string, alive?: boolean): Piece {
 
     // TODO: Castle
 
@@ -151,7 +151,7 @@ export function Rook(player: string, position: string, alive?: boolean): Piece {
 }
 
 // Knight
-export  function Knight(player: string, position: string, alive?: boolean): Piece {
+export  function Knight(player: 'user' | 'ai', position: string, alive?: boolean): Piece {
     return {
         id: uuidv4(),
         type: 'knight',
@@ -161,14 +161,36 @@ export  function Knight(player: string, position: string, alive?: boolean): Piec
 
         // Checks if piece can move to the location
         canMove: (location: string, enemyPieces: Piece[], usersPieces: Piece[]) => {
-            console.log(`can I move to ${location}?`);
+            
 
-            return false;
+            if (player === 'user') {
+
+                // 1x 2y
+                if (location[0].charCodeAt(0) === (position[0].charCodeAt(0) + 1) || location[0].charCodeAt(0) === (position[0].charCodeAt(0) - 1)) {
+                    if ((Number(location[1]) - 2) === Number(position[1]) || (Number(location[1]) + 2) === Number(position[1])) return true;
+                }
+
+                // 2x 1y
+                else if (location[0].charCodeAt(0) === (position[0].charCodeAt(0) + 2) || location[0].charCodeAt(0) === (position[0].charCodeAt(0) - 2)) {
+                    if ((Number(location[1]) - 1) === Number(position[1]) || (Number(location[1]) + 1) === Number(position[1])) return true;
+                }
+
+                return false;
+            }
+            else {
+                return false;
+            }
+
         },
 
         // Moves piece to the location
         move: (location: string, enemyPieces: Piece[]) => {
-            console.log(`move to location: ${location}`);
+
+            // If there is an enemy at this location, eliminate them
+            const enemy = enemyPieces.find(piece => piece.position === location)
+            if (enemy) enemy.alive = false;
+
+            position = location;
 
             return enemyPieces;
         }
@@ -177,7 +199,7 @@ export  function Knight(player: string, position: string, alive?: boolean): Piec
 }
 
 // Bishop
-export function Bishop(player: string, position: string, alive?: boolean): Piece {
+export function Bishop(player: 'user' | 'ai', position: string, alive?: boolean): Piece {
     return {
         id: uuidv4(),
         type: 'bishop',
@@ -203,7 +225,7 @@ export function Bishop(player: string, position: string, alive?: boolean): Piece
 }
 
 // Queen
-export function Queen(player: string, position: string, alive?: boolean): Piece {
+export function Queen(player: 'user' | 'ai', position: string, alive?: boolean): Piece {
     return {
         id: uuidv4(),
         type: 'queen',
@@ -229,7 +251,7 @@ export function Queen(player: string, position: string, alive?: boolean): Piece 
 }
 
 // King
-export function King(player: string, position: string, alive?: boolean): Piece {
+export function King(player: 'user' | 'ai', position: string, alive?: boolean): Piece {
     return {
         id: uuidv4(),
         type: 'king',

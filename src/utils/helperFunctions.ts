@@ -1,7 +1,7 @@
 import { type Piece, type Player } from "../types/chessTypes";
 import { Bishop, King, Knight, Pawn, Queen, Rook } from "./pieces";
 
-export function createUser(player: string): Player {
+export function createUser(player: 'user' | 'ai'): Player {
 
     // Check local storage for player
     const savedPlayer = localStorage.getItem(player);
@@ -43,7 +43,7 @@ export function createUser(player: string): Player {
 }
 
 // Array of initial pieces and their positions at the start of the game
-export function generateInitialPieces(player: string): Piece[] {
+export function generateInitialPieces(player: 'user' | 'ai'): Piece[] {
 
     const initialPieces: Piece[] = [
 

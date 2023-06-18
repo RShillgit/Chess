@@ -1,7 +1,7 @@
 export type Piece = {
   id: string,
   type: string,
-  owner: string,
+  owner: 'user' | 'ai',
   alive: boolean,
   position: string,
   canMove: (location: string, enemyPieces: Piece[], usersPieces: Piece[]) => boolean,
