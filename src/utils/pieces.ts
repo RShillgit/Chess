@@ -212,11 +212,19 @@ export function Bishop(player: 'user' | 'ai', position: string, alive?: boolean)
         // Checks if piece can move to the location
         canMove: (location: string, enemyPieces: Piece[], usersPieces: Piece[]) => {
 
-            // Diagonal/equal in x and y directions
-            if(pieceInPath('diagonal', position, location, enemyPieces, usersPieces)) return false;
-            if (Math.abs(location[0].charCodeAt(0) - position[0].charCodeAt(0)) === Math.abs(Number(location[1]) - Number(position[1]))) return true;
+            // User's bishop
+            if (player === 'user') {
+                // Diagonal/equal in x and y directions
+                if(pieceInPath('diagonal', position, location, enemyPieces, usersPieces)) return false;
+                if (Math.abs(location[0].charCodeAt(0) - position[0].charCodeAt(0)) === Math.abs(Number(location[1]) - Number(position[1]))) return true;
 
-            return false;
+                return false;
+            }
+
+            // AI's bishop
+            else {
+                return false;
+            }
         },
 
         // Moves piece to the location
@@ -244,9 +252,37 @@ export function Queen(player: 'user' | 'ai', position: string, alive?: boolean):
 
         // Checks if piece can move to the location
         canMove: (location: string, enemyPieces: Piece[], usersPieces: Piece[]) => {
-            console.log(`can I move to ${location}?`);
 
-            return false;
+            // User's queen
+            if (player === 'user') {
+
+                // Column
+                if (position[0] === location[0]) {
+                    // Piece inbetween
+                    if (pieceInPath('column', position, location, enemyPieces, usersPieces)) return false;
+                    return true;
+                }
+                
+                // Row
+                else if (Number(position[1]) === Number(location[1])) {
+                    // Piece inbetween
+                    if (pieceInPath('row', position, location, enemyPieces, usersPieces)) return false;
+                    return true;
+                }
+
+                // Diagonal
+                else if (Math.abs(location[0].charCodeAt(0) - position[0].charCodeAt(0)) === Math.abs(Number(location[1]) - Number(position[1]))) {
+                    // Piece inbetween
+                    if (pieceInPath('diagonal', position, location, enemyPieces, usersPieces)) return false;
+                    return true;
+                }
+            
+                return false;
+            }
+            // AI's queen
+            else {
+                return false;
+            }
         },
 
         // Moves piece to the location
