@@ -93,7 +93,7 @@ const ChessBoard = () => {
             const userPieceExists = user.pieces.find(piece => piece.position === e.currentTarget.id);
             if (userPieceExists) return false;
 
-            const moveViable = selectedChessPiece.canMove(e.currentTarget.id, ai.pieces);
+            const moveViable = selectedChessPiece.canMove(e.currentTarget.id, ai.pieces, user.pieces);
             
             // Green if piece can go there
             if (moveViable) {

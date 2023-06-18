@@ -4,7 +4,7 @@ export type Piece = {
   owner: string,
   alive: boolean,
   position: string,
-  canMove: (location: string, enemyPieces: Piece[]) => boolean,
+  canMove: (location: string, enemyPieces: Piece[], usersPieces: Piece[]) => boolean,
   move: (location: string, enemyPieces: Piece[]) => Piece[],
 }
 

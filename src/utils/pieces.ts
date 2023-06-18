@@ -15,9 +15,9 @@ export function Pawn(player: string, position: string, alive?: boolean): Piece {
         // TODO: Promotions
 
         // Checks if piece can move to the location
-        canMove: (location: string, enemyPieces: Piece[]) => {
+        canMove: (location: string, enemyPieces: Piece[], usersPieces: Piece[]) => {
 
-            // User Pawn
+            // User's Pawn
             if (player === 'user') {
 
                 // Enemy diagonal and 1 row in front 
@@ -69,7 +69,7 @@ export function Pawn(player: string, position: string, alive?: boolean): Piece {
                 }
             }
 
-            // AI
+            // AI's pawn
             else {
                 return false;
             }
@@ -93,6 +93,9 @@ export function Pawn(player: string, position: string, alive?: boolean): Piece {
 
 // Rook
 export function Rook(player: string, position: string, alive?: boolean): Piece {
+
+    // TODO: Castle
+
     return {
         id: uuidv4(),
         type: 'rook',
@@ -101,15 +104,45 @@ export function Rook(player: string, position: string, alive?: boolean): Piece {
         position: position,
 
         // Checks if piece can move to the location
-        canMove: (location: string, enemyPieces: Piece[]) => {
-            console.log(`can I move to ${location}?`);
+        canMove: (location: string, enemyPieces: Piece[], usersPieces: Piece[]) => {
 
-            return false;
+            // User's rook
+            if (player === 'user') {
+
+                // Hovering in the same column
+                if (position[0] === location[0]) {
+
+                    // Piece inbetween in column
+                    if (pieceInPath('column', position, location, enemyPieces, usersPieces)) return false;
+                    return true;
+                }
+                
+                // Hovering in the same row
+                else if (Number(position[1]) === Number(location[1])) {
+
+                    // Piece inbetween in row
+                    if (pieceInPath('row', position, location, enemyPieces, usersPieces)) return false;
+                    return true;
+                }
+
+                return false;
+            }
+
+            // AI's rook
+            else {
+                return false;
+            }
+
         },
 
         // Moves piece to the location
         move: (location: string, enemyPieces: Piece[]) => {
-            console.log(`move to location: ${location}`);
+
+            // If there is an enemy at this location, eliminate them
+            const enemy = enemyPieces.find(piece => piece.position === location)
+            if (enemy) enemy.alive = false;
+
+            position = location;
 
             return enemyPieces;
         }
@@ -127,7 +160,7 @@ export  function Knight(player: string, position: string, alive?: boolean): Piec
         position: position,
 
         // Checks if piece can move to the location
-        canMove: (location: string, enemyPieces: Piece[]) => {
+        canMove: (location: string, enemyPieces: Piece[], usersPieces: Piece[]) => {
             console.log(`can I move to ${location}?`);
 
             return false;
@@ -153,7 +186,7 @@ export function Bishop(player: string, position: string, alive?: boolean): Piece
         position: position,
 
         // Checks if piece can move to the location
-        canMove: (location: string, enemyPieces: Piece[]) => {
+        canMove: (location: string, enemyPieces: Piece[], usersPieces: Piece[]) => {
             console.log(`can I move to ${location}?`);
 
             return false;
@@ -179,7 +212,7 @@ export function Queen(player: string, position: string, alive?: boolean): Piece 
         position: position,
 
         // Checks if piece can move to the location
-        canMove: (location: string, enemyPieces: Piece[]) => {
+        canMove: (location: string, enemyPieces: Piece[], usersPieces: Piece[]) => {
             console.log(`can I move to ${location}?`);
 
             return false;
@@ -205,7 +238,7 @@ export function King(player: string, position: string, alive?: boolean): Piece {
         position: position,
 
         // Checks if piece can move to the location
-        canMove: (location: string, enemyPieces: Piece[]) => {
+        canMove: (location: string, enemyPieces: Piece[], usersPieces: Piece[]) => {
             console.log(`can I move to ${location}?`);
 
             return false;
@@ -220,3 +253,40 @@ export function King(player: string, position: string, alive?: boolean): Piece {
 
     }
 }
+
+// Checks if there is a piece blocking the path
+function pieceInPath (path: 'column' | 'row' | 'diagonal', position: string, location: string, enemyPieces: Piece[], friendlyPieces: Piece[]): boolean {
+
+    const allPieces: Piece[] = enemyPieces.concat(friendlyPieces);
+
+    let pieceInbetween: Piece | undefined;
+
+    // Column
+    if (path === 'column') {
+        pieceInbetween = allPieces.find(piece => {
+            // Same column
+            if (piece.position[0] === position[0]) {
+                if (piece.alive && Number(position[1]) < Number(piece.position[1]) && Number(piece.position[1]) < Number(location[1])) return piece;
+                else if (piece.alive && Number(position[1]) > Number(piece.position[1]) && Number(piece.position[1]) > Number(location[1])) return piece;
+            }
+        })
+    }
+
+    // Row
+    else if (path === 'row') {
+        pieceInbetween = allPieces.find(piece => {
+            // Same row
+            if (Number(piece.position[1]) === Number(position[1])) {
+                if (piece.alive && position[0].charCodeAt(0) < piece.position[0].charCodeAt(0) && piece.position[0].charCodeAt(0) < location[0].charCodeAt(0)) return piece;
+                else if (piece.alive && position[0].charCodeAt(0) > piece.position[0].charCodeAt(0) && piece.position[0].charCodeAt(0) > location[0].charCodeAt(0)) return piece;
+            }
+        })
+    }
+
+    // TODO: Diagonal
+
+
+    if (pieceInbetween) return true;
+    return false;
+}
+
