@@ -310,9 +310,47 @@ export function King(player: 'user' | 'ai', position: string, alive?: boolean): 
 
         // Checks if piece can move to the location
         canMove: (location: string, enemyPieces: Piece[], usersPieces: Piece[]) => {
-            console.log(`can I move to ${location}?`);
+            
+            // User's King
+            if (player === 'user') {
 
-            return false;
+                // Column
+                if (location[0] === position[0]) {
+
+                    // 1 row higher/lower
+                    if (Number(position[1]) + 1 === Number(location[1]) || Number(position[1]) - 1 === Number(location[1])) return true
+                    return false;
+
+                } 
+                // Row
+                else if (Number(position[1]) === Number(location[1])) {
+
+                    // 1 row left/right
+                    if ((location[0].charCodeAt(0) - 1) === position[0].charCodeAt(0) || (location[0].charCodeAt(0) + 1) === position[0].charCodeAt(0)) return true;
+           
+                    return false;
+                }
+
+                // Diagonal
+                else if (Math.abs(location[0].charCodeAt(0) - position[0].charCodeAt(0)) === Math.abs(Number(location[1]) - Number(position[1]))) {
+
+                    // 1 Position in any diagonal direction
+                    if ((location[0].charCodeAt(0) - 1) === position[0].charCodeAt(0) && (Number(location[1]) - 1) === Number(position[1])
+                        || (location[0].charCodeAt(0) - 1) === position[0].charCodeAt(0) && (Number(location[1]) + 1) === Number(position[1]) 
+                        || (location[0].charCodeAt(0) + 1) === position[0].charCodeAt(0) && (Number(location[1]) - 1) === Number(position[1]) 
+                        || (location[0].charCodeAt(0) + 1) === position[0].charCodeAt(0) && (Number(location[1]) + 1) === Number(position[1]) 
+                    ) return true;
+                    return false;
+
+                }
+
+                return false;
+            }
+
+            // AI's King
+            else {
+                return false;
+            }
         },
 
         // Moves piece to the location
