@@ -10,7 +10,7 @@ type boardBox = {
 
 const ChessBoard = () => {
 
-    const { user, ai, selectPiece, selectedChessPiece, moveChessPiece } = useChessContext();
+    const { user, ai, selectPiece, selectedChessPiece, moveChessPiece, moveAiPiece } = useChessContext();
 
     const [board, setBoard] = useState<boardBox[]>([]);
 
@@ -54,11 +54,35 @@ const ChessBoard = () => {
 
     }, [])
 
+    // On AI turn change impliment movement
+    useEffect(() => {
+
+        if (ai.turn) {
+
+            // See if any of the AI pieces can eleminate a user piece
+            for (let i = 0; i < ai.pieces.length; i++) {
+                for (let j = 0; j < user.pieces.length; j++) {
+
+                    if (ai.pieces[i].canMove(user.pieces[j].position, user.pieces, ai.pieces)) {
+
+                        moveAiPiece(ai.pieces[i], user.pieces[j].position);
+                        return;
+                    }
+                }
+            }
+            // If not, select a random piece and move it to a random location
+            
+
+        }
+
+    }, [ai])
+
     // Checks if piece exists on location
     const checkPieceLocation = (position: string) => {
 
         const userPieceExists = user.pieces.find(piece => piece.position === position);
         const aiPieceExists = ai.pieces.find(piece => piece.position === position);
+        console.log(aiPieceExists)
 
         if (userPieceExists) {
 
@@ -77,10 +101,14 @@ const ChessBoard = () => {
             }
 
         }
-        else if (aiPieceExists) {
+        
+        if (aiPieceExists) {
+
             if(aiPieceExists.alive) {
                 return (
-                    <div className="bg-black w-1/2 h-1/2 border-4 border-black rounded-full"></div>
+                    <div className="bg-black w-1/2 h-1/2 border-4 border-black rounded-full">
+                        <p className="text-xs text-white">{aiPieceExists.type}</p>
+                    </div>
                 )
             }
         }

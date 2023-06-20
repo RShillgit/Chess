@@ -12,6 +12,7 @@ type ChessContext = {
     selectedChessPiece: (Piece | null),
     selectPiece: (piece: Piece | null) => void,
     moveChessPiece: (newPosition: string, enemy: Player) => void,
+    moveAiPiece: (piece: Piece, destination: string) => void,
 }
 
 const chessContext = createContext({} as ChessContext)
@@ -35,15 +36,19 @@ export function ChessContextProvider( { children }: ChessContextProviderProps ) 
         ];
 
         if (piece) {
-            setSelectedChessPiece((prevPiece) => {
-                if(prevPiece) {
-                    const prevSelectedPiece = document.getElementById(`piece-${prevPiece.position}`);
-                    prevSelectedPiece?.classList.remove(...selectedPieceStyles);
-                }
-                const chessPiece = document.getElementById(`piece-${piece.position}`);
-                chessPiece?.classList.add(...selectedPieceStyles);
-                return piece;
-            })
+            if (piece.owner === 'user') {
+                setSelectedChessPiece((prevPiece) => {
+                    if(prevPiece) {
+                        const prevSelectedPiece = document.getElementById(`piece-${prevPiece.position}`);
+                        prevSelectedPiece?.classList.remove(...selectedPieceStyles);
+                    }
+                    const chessPiece = document.getElementById(`piece-${piece.position}`);
+                    chessPiece?.classList.add(...selectedPieceStyles);
+                    return piece;
+                })
+            }
+            else setSelectedChessPiece(piece);
+
         } else {
             setSelectedChessPiece((prevPiece) => {
                 if(prevPiece) {
@@ -110,9 +115,47 @@ export function ChessContextProvider( { children }: ChessContextProviderProps ) 
         setSelectedChessPiece(null);
     }
 
+    // Moves AI chess piece
+    const moveAiPiece = (piece: Piece, destination: string) => {
+
+        // Move the piece
+        const updatedEnemyPieces = piece.move(destination, user.pieces);
+
+        // Update the user
+        setUser(prevUser => {
+
+            const newUser = {
+                ...prevUser,
+                pieces: updatedEnemyPieces,
+                turn: true
+            }
+            localStorage.setItem('user', JSON.stringify(newUser));
+            return newUser;
+
+        });
+
+        // Update the AI
+        setAi(prevAi => {
+
+            // Find and update selected piece
+            const changedPiece = prevAi.pieces.find(p => p === piece);
+
+            if (changedPiece) {
+                changedPiece.position = destination
+            }
+
+            prevAi.turn = false;
+
+            // Update local storage
+            localStorage.setItem('ai', JSON.stringify(prevAi));
+            return prevAi;
+
+        })
+    }
+
 
     return (
-        <chessContext.Provider value={{user, ai, selectedChessPiece, selectPiece, moveChessPiece}} >
+        <chessContext.Provider value={{user, ai, selectedChessPiece, selectPiece, moveChessPiece, moveAiPiece}} >
             {children}
         </chessContext.Provider>
     )

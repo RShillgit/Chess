@@ -40,6 +40,12 @@ export function Pawn(player: 'user' | 'ai', position: string, alive?: boolean): 
                 // Unmoved pawn can move 1 or 2 spaces
                 else if (Number(position[1]) === 2) {
 
+                    // If there is an enemy in front return false
+                    const enemyInFront = enemyPieces.find(piece => {
+                        return piece.position === `${position[0]}${Number(position[1]) + 1}`
+                    })
+                    if (enemyInFront) return false;
+
                     // Hovering in the same column
                     if (location[0] === position[0]) {
 
@@ -73,7 +79,65 @@ export function Pawn(player: 'user' | 'ai', position: string, alive?: boolean): 
 
             // AI's pawn
             else {
-                return false;
+                // Enemy diagonal and 1 row in front 
+                // Hovering over adjacent column
+                if (location[0].charCodeAt(0) === (position[0].charCodeAt(0) + 1) || location[0].charCodeAt(0) === (position[0].charCodeAt(0) - 1)) {
+                    
+                    // Hovering over row below
+                    if (Number(location[1]) === (Number(position[1]) - 1)) {
+                        
+                        // Diagonal enemy exists
+                        if (enemyPieces.find(piece => piece.position === location)) return true;
+                        else return false;
+
+                    } else return false;
+
+                }
+
+                // Unmoved pawn can move 1 or 2 spaces
+                else if (Number(position[1]) === 7) {
+
+                    // If there is an enemy in front return false
+                    const enemyInFront = enemyPieces.find(piece => {
+                        return piece.position === `${position[0]}${Number(position[1]) - 1}`
+                    })
+                    if (enemyInFront) return false;
+
+                    // If there is an enemy at the hover location return false
+                    const enemyAtHover = enemyPieces.find(piece => {
+                        return piece.position === `${location[0]}${Number(location[1])}`
+                    })
+                    if(enemyAtHover) return false;
+
+                    // Hovering in the same column
+                    else if (location[0] === position[0]) {
+
+                        // Hovering in row 5 or 6 
+                        if (Number(location[1]) === 6 || Number(location[1]) === 5) return true;
+                        return false;
+
+                    } else return false;
+                }
+
+                // can only move 1 space
+                else {
+
+                    // If there is an enemy in front return false
+                    const enemyInFront = enemyPieces.find(piece => {
+                        return piece.position === `${position[0]}${Number(position[1]) - 1}`
+                    })
+                    if (enemyInFront) return false;
+
+                    // Hovering in the same column
+                    if (location[0] === position[0]) {
+
+                        // Hovering 1 row lower
+                        if (Number(position[1]) - 1 === Number(location[1])) return true
+                        return false;
+
+                    } else return false;
+
+                }
             }
 
         },
