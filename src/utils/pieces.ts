@@ -146,7 +146,7 @@ export function Pawn(player: 'user' | 'ai', position: string, alive?: boolean): 
         move: (location: string, enemyPieces: Piece[]) => {
 
             // If there is an enemy at this location, eliminate them
-            const enemy = enemyPieces.find(piece => piece.position === location)
+            const enemy = enemyPieces.find(piece => piece.alive && piece.position === location)
             if (enemy) enemy.alive = false;
 
             position = location;
@@ -172,32 +172,23 @@ export function Rook(player: 'user' | 'ai', position: string, alive?: boolean): 
         // Checks if piece can move to the location
         canMove: (location: string, enemyPieces: Piece[], usersPieces: Piece[]) => {
 
-            // User's rook
-            if (player === 'user') {
+            // Hovering in the same column
+            if (position[0] === location[0]) {
 
-                // Hovering in the same column
-                if (position[0] === location[0]) {
+                // Piece inbetween in column
+                if (pieceInPath('column', position, location, enemyPieces, usersPieces)) return false;
+                return true;
+            }
+            
+            // Hovering in the same row
+            else if (Number(position[1]) === Number(location[1])) {
 
-                    // Piece inbetween in column
-                    if (pieceInPath('column', position, location, enemyPieces, usersPieces)) return false;
-                    return true;
-                }
-                
-                // Hovering in the same row
-                else if (Number(position[1]) === Number(location[1])) {
-
-                    // Piece inbetween in row
-                    if (pieceInPath('row', position, location, enemyPieces, usersPieces)) return false;
-                    return true;
-                }
-
-                return false;
+                // Piece inbetween in row
+                if (pieceInPath('row', position, location, enemyPieces, usersPieces)) return false;
+                return true;
             }
 
-            // AI's rook
-            else {
-                return false;
-            }
+            return false;
 
         },
 
@@ -205,7 +196,7 @@ export function Rook(player: 'user' | 'ai', position: string, alive?: boolean): 
         move: (location: string, enemyPieces: Piece[]) => {
 
             // If there is an enemy at this location, eliminate them
-            const enemy = enemyPieces.find(piece => piece.position === location)
+            const enemy = enemyPieces.find(piece => piece.alive && piece.position === location);
             if (enemy) enemy.alive = false;
 
             position = location;
@@ -227,33 +218,31 @@ export  function Knight(player: 'user' | 'ai', position: string, alive?: boolean
 
         // Checks if piece can move to the location
         canMove: (location: string, enemyPieces: Piece[], usersPieces: Piece[]) => {
-            
 
-            if (player === 'user') {
-
-                // 1x 2y
-                if (location[0].charCodeAt(0) === (position[0].charCodeAt(0) + 1) || location[0].charCodeAt(0) === (position[0].charCodeAt(0) - 1)) {
-                    if ((Number(location[1]) - 2) === Number(position[1]) || (Number(location[1]) + 2) === Number(position[1])) return true;
+            // 1x 2y
+            if (location[0].charCodeAt(0) === (position[0].charCodeAt(0) + 1) || location[0].charCodeAt(0) === (position[0].charCodeAt(0) - 1)) {
+                if ((Number(location[1]) - 2) === Number(position[1]) || (Number(location[1]) + 2) === Number(position[1])) {
+                    if (!usersPieces.find(piece => piece.alive && piece.position === location)) return true;
+                    return false;
                 }
-
-                // 2x 1y
-                else if (location[0].charCodeAt(0) === (position[0].charCodeAt(0) + 2) || location[0].charCodeAt(0) === (position[0].charCodeAt(0) - 2)) {
-                    if ((Number(location[1]) - 1) === Number(position[1]) || (Number(location[1]) + 1) === Number(position[1])) return true;
-                }
-
-                return false;
-            }
-            else {
-                return false;
             }
 
+            // 2x 1y
+            else if (location[0].charCodeAt(0) === (position[0].charCodeAt(0) + 2) || location[0].charCodeAt(0) === (position[0].charCodeAt(0) - 2)) {
+                if ((Number(location[1]) - 1) === Number(position[1]) || (Number(location[1]) + 1) === Number(position[1])) {
+                    if (!usersPieces.find(piece => piece.alive && piece.position === location)) return true;
+                    return false;
+                }
+            }
+
+            return false;
         },
 
         // Moves piece to the location
         move: (location: string, enemyPieces: Piece[]) => {
 
             // If there is an enemy at this location, eliminate them
-            const enemy = enemyPieces.find(piece => piece.position === location)
+            const enemy = enemyPieces.find(piece => piece.alive && piece.position === location)
             if (enemy) enemy.alive = false;
 
             position = location;
@@ -294,7 +283,7 @@ export function Bishop(player: 'user' | 'ai', position: string, alive?: boolean)
         // Moves piece to the location
         move: (location: string, enemyPieces: Piece[]) => {
             // If there is an enemy at this location, eliminate them
-            const enemy = enemyPieces.find(piece => piece.position === location)
+            const enemy = enemyPieces.find(piece => piece.alive && piece.position === location)
             if (enemy) enemy.alive = false;
 
             position = location;
@@ -352,7 +341,7 @@ export function Queen(player: 'user' | 'ai', position: string, alive?: boolean):
         // Moves piece to the location
         move: (location: string, enemyPieces: Piece[]) => {
             // If there is an enemy at this location, eliminate them
-            const enemy = enemyPieces.find(piece => piece.position === location)
+            const enemy = enemyPieces.find(piece => piece.alive && piece.position === location)
             if (enemy) enemy.alive = false;
 
             position = location;
@@ -420,11 +409,10 @@ export function King(player: 'user' | 'ai', position: string, alive?: boolean): 
         // Moves piece to the location
         move: (location: string, enemyPieces: Piece[]) => {
             // If there is an enemy at this location, eliminate them
-            const enemy = enemyPieces.find(piece => piece.position === location)
+            const enemy = enemyPieces.find(piece => piece.alive && piece.position === location)
             if (enemy) enemy.alive = false;
 
             position = location;
-
             return enemyPieces;
         }
 

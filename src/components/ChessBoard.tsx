@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useState } from "react"
+import React, { FC, ReactNode, useEffect, useState } from "react"
 import { useChessContext } from "../context/chessContext";
 import { Piece } from "../types/chessTypes";
 
@@ -80,17 +80,17 @@ const ChessBoard = () => {
     // Checks if piece exists on location
     const checkPieceLocation = (position: string) => {
 
-        const userPieceExists = user.pieces.find(piece => piece.position === position);
-        const aiPieceExists = ai.pieces.find(piece => piece.position === position);
+        const userPieceExists = user.pieces.find(piece => piece.alive && piece.position === position);
+        const aiPieceExists = ai.pieces.find(piece => piece.alive && piece.position === position);
 
         if (userPieceExists) {
 
             if (userPieceExists.alive) {
+
                 return (
                     <div className={user.turn ? 'bg-white w-1/2 h-1/2 border-4 border-white rounded-full cursor-pointer hover:border-yellow-500'
-                        : 'bg-white w-1/2 h-1/2 border-4 border-white rounded-full'
-                
-                    }
+                            : 'bg-white w-1/2 h-1/2 border-4 border-white rounded-full'
+                        }
                         id={`piece-${userPieceExists.position}`}
                         onClick={user.turn ? () => selectPiece(userPieceExists) : undefined}
                     >
@@ -98,7 +98,6 @@ const ChessBoard = () => {
                     </div>
                 )
             }
-
         }
         
         if (aiPieceExists) {
@@ -164,7 +163,7 @@ const ChessBoard = () => {
                 return;
             }
         }
-        randomlyMovePiece()
+        randomlyMovePiece();
     }
 
     return (

@@ -80,6 +80,7 @@ export function ChessContextProvider( { children }: ChessContextProviderProps ) 
 
             });
         }
+        /*
         else if (updatedEnemyPieces && enemy.name === 'user') {
             setUser(prevUser => {
 
@@ -93,6 +94,7 @@ export function ChessContextProvider( { children }: ChessContextProviderProps ) 
 
             });
         }
+        */
         
         // Update user
         setUser(prevUser => {
