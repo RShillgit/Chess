@@ -64,9 +64,12 @@ const ChessBoard = () => {
 
             if (userPieceExists.alive) {
                 return (
-                    <div className="bg-white w-1/2 h-1/2 border-4 border-white rounded-full cursor-pointer hover:border-yellow-500 focus:bg-red-700"
+                    <div className={user.turn ? 'bg-white w-1/2 h-1/2 border-4 border-white rounded-full cursor-pointer hover:border-yellow-500'
+                        : 'bg-white w-1/2 h-1/2 border-4 border-white rounded-full'
+                
+                    }
                         id={`piece-${userPieceExists.position}`}
-                        onClick={() => selectPiece(userPieceExists)}
+                        onClick={user.turn ? () => selectPiece(userPieceExists) : undefined}
                     >
                         <p className="text-xs text-black">{userPieceExists.type}</p>
                     </div>

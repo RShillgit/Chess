@@ -67,7 +67,8 @@ export function ChessContextProvider( { children }: ChessContextProviderProps ) 
 
                 const newAi = {
                     ...prevAi,
-                    pieces: updatedEnemyPieces
+                    pieces: updatedEnemyPieces,
+                    turn: true
                 }
                 localStorage.setItem('ai', JSON.stringify(newAi));
                 return newAi;
@@ -79,7 +80,8 @@ export function ChessContextProvider( { children }: ChessContextProviderProps ) 
 
                 const newUser = {
                     ...prevUser,
-                    pieces: updatedEnemyPieces
+                    pieces: updatedEnemyPieces,
+                    turn: true
                 }
                 localStorage.setItem('user', JSON.stringify(newUser));
                 return newUser;
@@ -96,6 +98,8 @@ export function ChessContextProvider( { children }: ChessContextProviderProps ) 
             if (changedPiece) {
                 changedPiece.position = newPosition
             }
+
+            prevUser.turn = false;
 
             // Update local storage
             localStorage.setItem('user', JSON.stringify(prevUser));
