@@ -71,7 +71,7 @@ const ChessBoard = () => {
                 }
             }
             // If not, select a random piece and move it to a random location
-            
+            randomlyMovePiece();
 
         }
 
@@ -82,7 +82,6 @@ const ChessBoard = () => {
 
         const userPieceExists = user.pieces.find(piece => piece.position === position);
         const aiPieceExists = ai.pieces.find(piece => piece.position === position);
-        console.log(aiPieceExists)
 
         if (userPieceExists) {
 
@@ -121,7 +120,7 @@ const ChessBoard = () => {
         if (selectedChessPiece) {
 
             // Box contains one of user's pieces
-            const userPieceExists = user.pieces.find(piece => piece.position === e.currentTarget.id);
+            const userPieceExists = user.pieces.find(piece => piece.alive && piece.position === e.currentTarget.id);
             if (userPieceExists) return false;
 
             const moveViable = selectedChessPiece.canMove(e.currentTarget.id, ai.pieces, user.pieces);
@@ -151,6 +150,21 @@ const ChessBoard = () => {
                 moveChessPiece(e.currentTarget.id, ai);
             }
         }
+    }
+
+    // Randomly moves AI pieces
+    function randomlyMovePiece() {
+        
+        const randomPiece = ai.pieces[Math.floor(Math.random() * ai.pieces.length)];
+        console.log(randomPiece)
+
+        for (let i = 0; i < board.length; i++) {
+            if(randomPiece.canMove(board[i].position, user.pieces, ai.pieces)) {
+                moveAiPiece(randomPiece, board[i].position);
+                return;
+            }
+        }
+        randomlyMovePiece()
     }
 
     return (
