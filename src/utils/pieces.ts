@@ -22,9 +22,11 @@ export function Pawn(player: 'user' | 'ai', position: string, alive?: boolean): 
             // User's Pawn
             if (player === 'user') {
 
+                if (position === location) return false;
+
                 // Enemy diagonal and 1 row in front 
                 // Hovering over adjacent column
-                if (location[0].charCodeAt(0) === (position[0].charCodeAt(0) + 1) || location[0].charCodeAt(0) === (position[0].charCodeAt(0) - 1)) {
+                else if (location[0].charCodeAt(0) === (position[0].charCodeAt(0) + 1) || location[0].charCodeAt(0) === (position[0].charCodeAt(0) - 1)) {
                     
                     // Hovering over row in front
                     if (Number(location[1]) === (Number(position[1]) + 1)) {
@@ -79,6 +81,9 @@ export function Pawn(player: 'user' | 'ai', position: string, alive?: boolean): 
 
             // AI's pawn
             else {
+
+                if (position === location) return false;
+
                 // Enemy diagonal and 1 row in front 
                 // Hovering over adjacent column
                 if (location[0].charCodeAt(0) === (position[0].charCodeAt(0) + 1) || location[0].charCodeAt(0) === (position[0].charCodeAt(0) - 1)) {
@@ -173,8 +178,14 @@ export function Rook(player: 'user' | 'ai', position: string, alive?: boolean): 
         // Checks if piece can move to the location
         canMove: (location: string, enemyPieces: Piece[], usersPieces: Piece[]) => {
 
+            if (position === location) return false;
+
+            // If there is a friendly piece at that location return false;
+            const friendlyAtPosition = usersPieces.find(piece => piece.alive && piece.position === location);
+            if (friendlyAtPosition) return false;
+
             // Hovering in the same column
-            if (position[0] === location[0]) {
+            else if (position[0] === location[0]) {
 
                 // Piece inbetween in column
                 if (pieceInPath('column', position, location, enemyPieces, usersPieces)) return false;
@@ -221,8 +232,14 @@ export  function Knight(player: 'user' | 'ai', position: string, alive?: boolean
         // Checks if piece can move to the location
         canMove: (location: string, enemyPieces: Piece[], usersPieces: Piece[]) => {
 
+            if (position === location) return false;
+
+            // If there is a friendly piece at that location return false
+            const friendlyAtPosition = usersPieces.find(piece => piece.alive && piece.position === location);
+            if (friendlyAtPosition) return false;
+
             // 1x 2y
-            if (location[0].charCodeAt(0) === (position[0].charCodeAt(0) + 1) || location[0].charCodeAt(0) === (position[0].charCodeAt(0) - 1)) {
+            else if (location[0].charCodeAt(0) === (position[0].charCodeAt(0) + 1) || location[0].charCodeAt(0) === (position[0].charCodeAt(0) - 1)) {
                 if ((Number(location[1]) - 2) === Number(position[1]) || (Number(location[1]) + 2) === Number(position[1])) {
                     if (!usersPieces.find(piece => piece.alive && piece.position === location)) return true;
                     return false;
@@ -268,9 +285,15 @@ export function Bishop(player: 'user' | 'ai', position: string, alive?: boolean)
         // Checks if piece can move to the location
         canMove: (location: string, enemyPieces: Piece[], usersPieces: Piece[]) => {
             
+            if (position === location) return false;
+
+            // If there is a friendly piece at that location return false
+            const friendlyAtPosition = usersPieces.find(piece => piece.alive && piece.position === location);
+            if (friendlyAtPosition) return false;
+
             // Diagonal/equal in x and y directions
-            if(pieceInPath('diagonal', position, location, enemyPieces, usersPieces)) return false;
-            if (Math.abs(location[0].charCodeAt(0) - position[0].charCodeAt(0)) === Math.abs(Number(location[1]) - Number(position[1]))) return true;
+            else if(pieceInPath('diagonal', position, location, enemyPieces, usersPieces)) return false;
+            else if (Math.abs(location[0].charCodeAt(0) - position[0].charCodeAt(0)) === Math.abs(Number(location[1]) - Number(position[1]))) return true;
 
             return false;
 
@@ -304,8 +327,14 @@ export function Queen(player: 'user' | 'ai', position: string, alive?: boolean):
         // Checks if piece can move to the location
         canMove: (location: string, enemyPieces: Piece[], usersPieces: Piece[]) => {
 
+            if (position === location) return false;
+
+            // If there is a friendly piece at that location return false;
+            const friendlyAtPosition = usersPieces.find(piece => piece.alive && piece.position === location);
+            if (friendlyAtPosition) return false;
+
             // Column
-            if (position[0] === location[0]) {
+            else if (position[0] === location[0]) {
                 // Piece inbetween
                 if (pieceInPath('column', position, location, enemyPieces, usersPieces)) return false;
                 return true;
@@ -356,9 +385,15 @@ export function King(player: 'user' | 'ai', position: string, alive?: boolean): 
 
         // Checks if piece can move to the location
         canMove: (location: string, enemyPieces: Piece[], usersPieces: Piece[]) => {
+
+            if (position === location) return false;
+
+            // If there is a friendly piece at that location return false;
+            const friendlyAtPosition = usersPieces.find(piece => piece.alive && piece.position === location);
+            if (friendlyAtPosition) return false;
             
             // Column
-            if (location[0] === position[0]) {
+            else if (location[0] === position[0]) {
 
                 // 1 row higher/lower
                 if (Number(position[1]) + 1 === Number(location[1]) || Number(position[1]) - 1 === Number(location[1])) return true
@@ -407,6 +442,10 @@ export function King(player: 'user' | 'ai', position: string, alive?: boolean): 
 
 // Checks if there is a piece blocking the path
 function pieceInPath (path: 'column' | 'row' | 'diagonal', position: string, location: string, enemyPieces: Piece[], friendlyPieces: Piece[]): boolean {
+
+    // If there is a friendly piece at that location return false;
+    const friendlyAtPosition = friendlyPieces.find(piece => piece.alive && piece.position === location);
+    if (friendlyAtPosition) return false;
 
     const allPieces: Piece[] = enemyPieces.concat(friendlyPieces);
 

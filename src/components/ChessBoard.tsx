@@ -158,7 +158,6 @@ const ChessBoard = () => {
         
         // Random piece
         const randomPiece = ai.pieces[Math.floor(Math.random() * ai.pieces.length)];
-        console.log(randomPiece)
 
         if (randomPiece.alive) {
 

@@ -80,21 +80,6 @@ export function ChessContextProvider( { children }: ChessContextProviderProps ) 
 
             });
         }
-        /*
-        else if (updatedEnemyPieces && enemy.name === 'user') {
-            setUser(prevUser => {
-
-                const newUser = {
-                    ...prevUser,
-                    pieces: updatedEnemyPieces,
-                    turn: true
-                }
-                localStorage.setItem('user', JSON.stringify(newUser));
-                return newUser;
-
-            });
-        }
-        */
         
         // Update user
         setUser(prevUser => {
@@ -119,6 +104,8 @@ export function ChessContextProvider( { children }: ChessContextProviderProps ) 
 
     // Moves AI chess piece
     const moveAiPiece = (piece: Piece, destination: string) => {
+
+        console.log("AI piece", piece, "moves to", destination);
 
         // Move the piece
         const updatedEnemyPieces = piece.move(destination, user.pieces);
