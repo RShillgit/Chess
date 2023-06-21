@@ -2,6 +2,13 @@ import React, { FC, ReactNode, useEffect, useState } from "react"
 import { useChessContext } from "../context/chessContext";
 import { Piece } from "../types/chessTypes";
 
+import pawnImg from '../assets/pawn.png';
+import rookImg from '../assets/rook.png';
+import knightImg from '../assets/knight.png';
+import bishopImg from '../assets/bishop.png';
+import queenImg from '../assets/queen.png';
+import kingImg from '../assets/king.png';
+
 type boardBox = {
     position: string,
     color: string,
@@ -90,14 +97,19 @@ const ChessBoard = () => {
             if (userPieceExists.alive) {
 
                 return (
-                    <div className={user.turn ? 'bg-white w-1/2 h-1/2 border-4 border-white rounded-full cursor-pointer hover:border-yellow-500'
-                            : 'bg-white w-1/2 h-1/2 border-4 border-white rounded-full'
-                        }
-                        id={`piece-${userPieceExists.position}`}
-                        onClick={user.turn ? () => selectPiece(userPieceExists) : undefined}
-                    >
-                        <p className="text-xs text-black">{userPieceExists.type}</p>
-                    </div>
+                    <>
+                        
+                        <div 
+                            id={`piece-${userPieceExists.position}`}
+                            onClick={user.turn ? () => selectPiece(userPieceExists) : undefined}
+                        >
+                            <img className={user.turn ? 'white-piece w-full cursor-pointer hover:piece-hover'
+                                : ''
+                            }
+                                src={determineCorrectImg(userPieceExists)} alt="" 
+                            />
+                        </div>
+                    </>
                 )
             }
         }
@@ -106,8 +118,8 @@ const ChessBoard = () => {
 
             if(aiPieceExists.alive) {
                 return (
-                    <div className="bg-black w-1/2 h-1/2 border-4 border-black rounded-full">
-                        <p className="text-xs text-white">{aiPieceExists.type}</p>
+                    <div>
+                        <img className="w-full" src={determineCorrectImg(aiPieceExists)} alt="" />
                     </div>
                 )
             }
@@ -170,6 +182,15 @@ const ChessBoard = () => {
             else return randomlyMovePiece();
         } else return randomlyMovePiece();
         
+    }
+
+    const determineCorrectImg = (piece: Piece) => {
+        if (piece.type === 'pawn') return pawnImg;
+        else if (piece.type === 'rook') return rookImg;
+        else if (piece.type === 'knight') return knightImg;
+        else if (piece.type === 'bishop') return bishopImg;
+        else if (piece.type === 'queen') return queenImg;
+        else if (piece.type === 'king') return kingImg;
     }
 
     return (
