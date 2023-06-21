@@ -55,7 +55,7 @@ const App = () => {
   useEffect(() => {
     console.log(user)
     console.log(ai)
-  }, [user, ai])
+  }, [])
 
   // Displays dead pieces
   const pieceGraveyard = (player: 'user' | 'ai') => {

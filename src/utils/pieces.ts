@@ -29,8 +29,8 @@ export function Pawn(player: 'user' | 'ai', position: string, alive?: boolean): 
                     // Hovering over row in front
                     if (Number(location[1]) === (Number(position[1]) + 1)) {
                         
-                        // Diagonal enemy exists
-                        if (enemyPieces.find(piece => piece.position === location)) return true;
+                        // Diagonal alive enemy exists
+                        if (enemyPieces.find(piece => piece.alive && piece.position === location)) return true;
                         else return false;
 
                     } else return false;
@@ -40,9 +40,9 @@ export function Pawn(player: 'user' | 'ai', position: string, alive?: boolean): 
                 // Unmoved pawn can move 1 or 2 spaces
                 else if (Number(position[1]) === 2) {
 
-                    // If there is an enemy in front return false
+                    // If there is an alive enemy in front return false
                     const enemyInFront = enemyPieces.find(piece => {
-                        return piece.position === `${position[0]}${Number(position[1]) + 1}`
+                        return piece.alive && piece.position === `${position[0]}${Number(position[1]) + 1}`
                     })
                     if (enemyInFront) return false;
 
@@ -59,9 +59,9 @@ export function Pawn(player: 'user' | 'ai', position: string, alive?: boolean): 
                 // can only move 1 space
                 else {
 
-                    // If there is an enemy in front return false
+                    // If there is an alive enemy in front return false
                     const enemyInFront = enemyPieces.find(piece => {
-                        return piece.position === `${position[0]}${Number(position[1]) + 1}`
+                        return piece.alive && piece.position === `${position[0]}${Number(position[1]) + 1}`
                     })
                     if (enemyInFront) return false;
 
@@ -86,8 +86,8 @@ export function Pawn(player: 'user' | 'ai', position: string, alive?: boolean): 
                     // Hovering over row below
                     if (Number(location[1]) === (Number(position[1]) - 1)) {
                         
-                        // Diagonal enemy exists
-                        if (enemyPieces.find(piece => piece.position === location)) return true;
+                        // Diagonal alive enemy exists
+                        if (enemyPieces.find(piece => piece.alive && piece.position === location)) return true;
                         else return false;
 
                     } else return false;
@@ -97,15 +97,15 @@ export function Pawn(player: 'user' | 'ai', position: string, alive?: boolean): 
                 // Unmoved pawn can move 1 or 2 spaces
                 else if (Number(position[1]) === 7) {
 
-                    // If there is an enemy in front return false
+                    // If there is an alive enemy in front return false
                     const enemyInFront = enemyPieces.find(piece => {
-                        return piece.position === `${position[0]}${Number(position[1]) - 1}`
+                        return piece.alive && piece.position === `${position[0]}${Number(position[1]) - 1}`
                     })
                     if (enemyInFront) return false;
 
-                    // If there is an enemy at the hover location return false
+                    // If there is an alive enemy at the hover location return false
                     const enemyAtHover = enemyPieces.find(piece => {
-                        return piece.position === `${location[0]}${Number(location[1])}`
+                        return piece.alive && piece.position === `${location[0]}${Number(location[1])}`
                     })
                     if(enemyAtHover) return false;
 
@@ -122,9 +122,9 @@ export function Pawn(player: 'user' | 'ai', position: string, alive?: boolean): 
                 // can only move 1 space
                 else {
 
-                    // If there is an enemy in front return false
+                    // If there is an alive enemy in front return false
                     const enemyInFront = enemyPieces.find(piece => {
-                        return piece.position === `${position[0]}${Number(position[1]) - 1}`
+                        return piece.alive && piece.position === `${position[0]}${Number(position[1]) - 1}`
                     })
                     if (enemyInFront) return false;
 
@@ -147,6 +147,7 @@ export function Pawn(player: 'user' | 'ai', position: string, alive?: boolean): 
 
             // If there is an enemy at this location, eliminate them
             const enemy = enemyPieces.find(piece => piece.alive && piece.position === location)
+
             if (enemy) enemy.alive = false;
 
             position = location;
@@ -195,8 +196,9 @@ export function Rook(player: 'user' | 'ai', position: string, alive?: boolean): 
         // Moves piece to the location
         move: (location: string, enemyPieces: Piece[]) => {
 
-            // If there is an enemy at this location, eliminate them
+            // If there is an alive enemy at this location, eliminate them
             const enemy = enemyPieces.find(piece => piece.alive && piece.position === location);
+
             if (enemy) enemy.alive = false;
 
             position = location;
@@ -241,8 +243,9 @@ export  function Knight(player: 'user' | 'ai', position: string, alive?: boolean
         // Moves piece to the location
         move: (location: string, enemyPieces: Piece[]) => {
 
-            // If there is an enemy at this location, eliminate them
+            // If there is an alive enemy at this location, eliminate them
             const enemy = enemyPieces.find(piece => piece.alive && piece.position === location)
+
             if (enemy) enemy.alive = false;
 
             position = location;
@@ -282,8 +285,10 @@ export function Bishop(player: 'user' | 'ai', position: string, alive?: boolean)
 
         // Moves piece to the location
         move: (location: string, enemyPieces: Piece[]) => {
-            // If there is an enemy at this location, eliminate them
+
+            // If there is an alive enemy at this location, eliminate them
             const enemy = enemyPieces.find(piece => piece.alive && piece.position === location)
+
             if (enemy) enemy.alive = false;
 
             position = location;
@@ -340,8 +345,10 @@ export function Queen(player: 'user' | 'ai', position: string, alive?: boolean):
 
         // Moves piece to the location
         move: (location: string, enemyPieces: Piece[]) => {
-            // If there is an enemy at this location, eliminate them
+
+            // If there is an alive enemy at this location, eliminate them
             const enemy = enemyPieces.find(piece => piece.alive && piece.position === location)
+
             if (enemy) enemy.alive = false;
 
             position = location;
@@ -408,8 +415,10 @@ export function King(player: 'user' | 'ai', position: string, alive?: boolean): 
 
         // Moves piece to the location
         move: (location: string, enemyPieces: Piece[]) => {
-            // If there is an enemy at this location, eliminate them
+
+            // If there is an alive enemy at this location, eliminate them
             const enemy = enemyPieces.find(piece => piece.alive && piece.position === location)
+
             if (enemy) enemy.alive = false;
 
             position = location;
@@ -429,45 +438,57 @@ function pieceInPath (path: 'column' | 'row' | 'diagonal', position: string, loc
     // Column
     if (path === 'column') {
         pieceInbetween = allPieces.find(piece => {
-            // Same column
-            if (piece.position[0] === position[0]) {
-                if (piece.alive && Number(position[1]) < Number(piece.position[1]) && Number(piece.position[1]) < Number(location[1])) return piece;
-                else if (piece.alive && Number(position[1]) > Number(piece.position[1]) && Number(piece.position[1]) > Number(location[1])) return piece;
+
+            if (piece.alive) {
+                // Same column
+                if (piece.position[0] === position[0]) {
+                    if (piece.alive && Number(position[1]) < Number(piece.position[1]) && Number(piece.position[1]) < Number(location[1])) return piece;
+                    else if (piece.alive && Number(position[1]) > Number(piece.position[1]) && Number(piece.position[1]) > Number(location[1])) return piece;
+                }
             }
+
         })
     }
 
     // Row
     else if (path === 'row') {
         pieceInbetween = allPieces.find(piece => {
-            // Same row
-            if (Number(piece.position[1]) === Number(position[1])) {
-                if (piece.alive && position[0].charCodeAt(0) < piece.position[0].charCodeAt(0) && piece.position[0].charCodeAt(0) < location[0].charCodeAt(0)) return piece;
-                else if (piece.alive && position[0].charCodeAt(0) > piece.position[0].charCodeAt(0) && piece.position[0].charCodeAt(0) > location[0].charCodeAt(0)) return piece;
+
+            if (piece.alive) {
+                // Same row
+                if (Number(piece.position[1]) === Number(position[1])) {
+                    if (piece.alive && position[0].charCodeAt(0) < piece.position[0].charCodeAt(0) && piece.position[0].charCodeAt(0) < location[0].charCodeAt(0)) return piece;
+                    else if (piece.alive && position[0].charCodeAt(0) > piece.position[0].charCodeAt(0) && piece.position[0].charCodeAt(0) > location[0].charCodeAt(0)) return piece;
+                }
             }
+
         })
     }
 
     // Diagonal
     else if (path === 'diagonal') {
         pieceInbetween = allPieces.find(piece => {
-            // Equal in x and y directions
-            if (Math.abs(piece.position[0].charCodeAt(0) - position[0].charCodeAt(0)) === Math.abs(Number(piece.position[1]) - Number(position[1]))) {
 
-                if (piece.alive && position[0].charCodeAt(0) < piece.position[0].charCodeAt(0) && piece.position[0].charCodeAt(0) < location[0].charCodeAt(0)
-                    && Number(position[1]) < Number(piece.position[1]) && Number(piece.position[1]) < Number(location[1]) 
-                ) return true;
-                else if (piece.alive && position[0].charCodeAt(0) < piece.position[0].charCodeAt(0) && piece.position[0].charCodeAt(0) < location[0].charCodeAt(0)
-                    && Number(position[1]) > Number(piece.position[1]) && Number(piece.position[1]) > Number(location[1]) 
-                ) return true;
-                else if (piece.alive && position[0].charCodeAt(0) > piece.position[0].charCodeAt(0) && piece.position[0].charCodeAt(0) > location[0].charCodeAt(0)
-                    && Number(position[1]) > Number(piece.position[1]) && Number(piece.position[1]) > Number(location[1]) 
-                ) return true;
-                else if (piece.alive && position[0].charCodeAt(0) > piece.position[0].charCodeAt(0) && piece.position[0].charCodeAt(0) > location[0].charCodeAt(0)
-                    && Number(position[1]) < Number(piece.position[1]) && Number(piece.position[1]) < Number(location[1]) 
-                ) return true;
+            if (piece.alive) {
+                // Equal in x and y directions
+                if (Math.abs(piece.position[0].charCodeAt(0) - position[0].charCodeAt(0)) === Math.abs(Number(piece.position[1]) - Number(position[1]))) {
 
+                    if (piece.alive && position[0].charCodeAt(0) < piece.position[0].charCodeAt(0) && piece.position[0].charCodeAt(0) < location[0].charCodeAt(0)
+                        && Number(position[1]) < Number(piece.position[1]) && Number(piece.position[1]) < Number(location[1]) 
+                    ) return true;
+                    else if (piece.alive && position[0].charCodeAt(0) < piece.position[0].charCodeAt(0) && piece.position[0].charCodeAt(0) < location[0].charCodeAt(0)
+                        && Number(position[1]) > Number(piece.position[1]) && Number(piece.position[1]) > Number(location[1]) 
+                    ) return true;
+                    else if (piece.alive && position[0].charCodeAt(0) > piece.position[0].charCodeAt(0) && piece.position[0].charCodeAt(0) > location[0].charCodeAt(0)
+                        && Number(position[1]) > Number(piece.position[1]) && Number(piece.position[1]) > Number(location[1]) 
+                    ) return true;
+                    else if (piece.alive && position[0].charCodeAt(0) > piece.position[0].charCodeAt(0) && piece.position[0].charCodeAt(0) > location[0].charCodeAt(0)
+                        && Number(position[1]) < Number(piece.position[1]) && Number(piece.position[1]) < Number(location[1]) 
+                    ) return true;
+
+                }
             }
+
         })
     }
 

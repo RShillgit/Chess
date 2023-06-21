@@ -63,10 +63,12 @@ const ChessBoard = () => {
             for (let i = 0; i < ai.pieces.length; i++) {
                 for (let j = 0; j < user.pieces.length; j++) {
 
-                    if (ai.pieces[i].canMove(user.pieces[j].position, user.pieces, ai.pieces)) {
+                    if (ai.pieces[i].alive && user.pieces[j].alive) {
+                        if (ai.pieces[i].canMove(user.pieces[j].position, user.pieces, ai.pieces)) {
+                            moveAiPiece(ai.pieces[i], user.pieces[j].position);
+                            return;
+                        }
 
-                        moveAiPiece(ai.pieces[i], user.pieces[j].position);
-                        return;
                     }
                 }
             }
@@ -152,18 +154,23 @@ const ChessBoard = () => {
     }
 
     // Randomly moves AI pieces
-    function randomlyMovePiece() {
+    function randomlyMovePiece(): void {
         
+        // Random piece
         const randomPiece = ai.pieces[Math.floor(Math.random() * ai.pieces.length)];
         console.log(randomPiece)
 
-        for (let i = 0; i < board.length; i++) {
-            if(randomPiece.canMove(board[i].position, user.pieces, ai.pieces)) {
-                moveAiPiece(randomPiece, board[i].position);
-                return;
+        if (randomPiece.alive) {
+
+            // Random box
+            const randomBox = board[Math.floor(Math.random() * board.length)].position;
+
+            if(randomPiece.canMove(randomBox, user.pieces, ai.pieces)) {
+                return moveAiPiece(randomPiece, randomBox);
             }
-        }
-        randomlyMovePiece();
+            else return randomlyMovePiece();
+        } else return randomlyMovePiece();
+        
     }
 
     return (
