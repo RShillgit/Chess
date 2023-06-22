@@ -72,19 +72,23 @@ const ChessBoard = () => {
                 return;
             }
 
-            // See if any of the AI pieces can eleminate a user piece
-            for (let i = 0; i < ai.pieces.length; i++) {
-                for (let j = 0; j < user.pieces.length; j++) {
+            const king = ai.pieces.find(p => p.type === 'king');
 
-                    if (ai.pieces[i].alive && user.pieces[j].alive) {
-                        if (ai.pieces[i].canMove(user.pieces[j].position, user.pieces, ai.pieces)) {
-                            moveAiPiece(ai.pieces[i], user.pieces[j].position);
-                            return;
+            if (king) {
+                // See if any of the AI pieces can eleminate a user piece
+                for (let i = 0; i < ai.pieces.length; i++) {
+                    for (let j = 0; j < user.pieces.length; j++) {
+
+                        if (ai.pieces[i].alive && user.pieces[j].alive) {
+                            if (ai.pieces[i].canMove(user.pieces[j].position, user.pieces, ai.pieces) && !kingWillBeChecked(king, user.pieces[j].position, ai, user)) {
+                                moveAiPiece(ai.pieces[i], user.pieces[j].position);
+                                return;
+                            }
                         }
-
                     }
                 }
             }
+
             // If not, select a random piece and move it to a random location
             randomlyMovePiece();
             return;
@@ -182,13 +186,14 @@ const ChessBoard = () => {
     function randomlyMovePiece(): void {
 
         const randomPiece = ai.pieces[Math.floor(Math.random() * ai.pieces.length)];
+        const king = ai.pieces.find(p => p.type === 'king');
 
-        if (randomPiece && randomPiece.alive) {
+        if (king && randomPiece && randomPiece.alive) {
 
             // Random box
             const randomBox = board[Math.floor(Math.random() * board.length)].position;
 
-            if(randomPiece.canMove(randomBox, user.pieces, ai.pieces)) {
+            if(randomPiece.canMove(randomBox, user.pieces, ai.pieces) && !kingWillBeChecked(king, randomBox, ai, user)) {
                 return moveAiPiece(randomPiece, randomBox);
             }
             else return randomlyMovePiece();
@@ -225,10 +230,12 @@ const ChessBoard = () => {
 
             for (let i = 0; i < allPossibleMoves.length; i++) {
 
-                if (king.canMove(allPossibleMoves[i], user.pieces, ai.pieces)) {
+                if (king.canMove(allPossibleMoves[i], user.pieces, ai.pieces) && !kingWillBeChecked(king, allPossibleMoves[i], ai, user)) {
                     return moveAiPiece(king, allPossibleMoves[i]);
                 }
             }
+
+            console.log("CHECK MATE");
 
         }
         return;
@@ -286,7 +293,7 @@ const ChessBoard = () => {
 
             const newKing = usersPiecesInludingThisMove.find(p => p.type === 'king');
     
-            // If it will be checked at the location return false 
+            // If it will be checked at the location return true
             if (newKing && aliveEnemyPieces.find(p => p.canMove(newKing.position, usersPiecesInludingThisMove, enemyPiecesIncludingThisMove))) return true;
             else return false;
         } else return false;
