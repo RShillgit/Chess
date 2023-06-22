@@ -10,6 +10,8 @@ type ChessContext = {
     user: Player,
     ai: Player,
     selectedChessPiece: (Piece | null),
+    aiKingChecked: boolean,
+    userKingChecked: boolean,
     selectPiece: (piece: Piece | null) => void,
     moveChessPiece: (newPosition: string, enemy: Player) => void,
     moveAiPiece: (piece: Piece, destination: string) => void,
@@ -26,7 +28,17 @@ export function ChessContextProvider( { children }: ChessContextProviderProps ) 
     // User & Ai
     const [user, setUser] = useState<Player>(() => createUser('user'));
     const [ai, setAi] = useState<Player>(() => createUser('ai'));
+
     const [selectedChessPiece, setSelectedChessPiece] = useState<Piece | null>(null);
+
+    // Checked Kings
+    const [userKingChecked, setUserKingChecked] = useState(false);
+    const [aiKingChecked, setAiKingChecked] = useState(false);
+
+    // On mount check for checked kings
+    useEffect(() => {
+        opponentKingIsChecked();
+    }, [])
 
     const selectPiece = (piece: Piece | null) => {
 
@@ -100,12 +112,12 @@ export function ChessContextProvider( { children }: ChessContextProviderProps ) 
         })
 
         setSelectedChessPiece(null);
+
+        opponentKingIsChecked();
     }
 
     // Moves AI chess piece
     const moveAiPiece = (piece: Piece, destination: string) => {
-
-        console.log("AI piece", piece, "moves to", destination);
 
         // Move the piece
         const updatedEnemyPieces = piece.move(destination, user.pieces);
@@ -140,11 +152,87 @@ export function ChessContextProvider( { children }: ChessContextProviderProps ) 
             return prevAi;
 
         })
+
+        opponentKingIsChecked();
+    }
+
+    // Checks if the opponents king is checked
+    const opponentKingIsChecked = () => {
+
+        // AI's king
+        const aiKing = ai.pieces.find(piece => piece.alive && piece.type === 'king');
+
+        // User's king
+        const userKing = user.pieces.find(piece => piece.alive && piece.type === 'king');
+
+        if (aiKing) {
+
+            // AI's king is checked
+            if (user.pieces.filter(piece => piece.alive).some(piece => piece.alive && piece.canMove(aiKing.position, ai.pieces, user.pieces))) {
+                console.log("AI's King Is Checked!!!!!!");
+                setAiKingChecked(true);
+    
+                setAi(prevAi => {
+    
+                    aiKing.checked = true;
+    
+                    localStorage.setItem('ai', JSON.stringify(prevAi));
+                    return prevAi;
+    
+                })
+            } 
+            // AI's king is not checked
+            else {
+                setAi(prevAi => {
+    
+                    aiKing.checked = false;
+    
+                    localStorage.setItem('ai', JSON.stringify(prevAi));
+                    return prevAi;
+    
+                })
+
+                setAiKingChecked(false);
+            }
+        } 
+
+        if (userKing) {
+
+            // User's king is checked
+            if (ai.pieces.filter(piece => piece.alive).some(piece => piece.alive && piece.canMove(userKing.position, user.pieces, ai.pieces))) {
+                console.log("User's King Is Checked!!!!!!");
+                setUserKingChecked(true);
+    
+                setUser(prevUser => {
+    
+                    userKing.checked = true;
+    
+                    localStorage.setItem('user', JSON.stringify(prevUser));
+                    return prevUser;
+    
+                })
+            }
+
+            // User's king is not checked
+            else {
+                setUser(prevUser => {
+
+                    userKing.checked = false;
+    
+                    localStorage.setItem('user', JSON.stringify(prevUser));
+                    return prevUser;
+    
+                })
+
+                setUserKingChecked(false);
+            }
+        }
+
     }
 
 
     return (
-        <chessContext.Provider value={{user, ai, selectedChessPiece, selectPiece, moveChessPiece, moveAiPiece}} >
+        <chessContext.Provider value={{user, ai, selectedChessPiece, aiKingChecked, userKingChecked, selectPiece, moveChessPiece, moveAiPiece}} >
             {children}
         </chessContext.Provider>
     )

@@ -12,4 +12,7 @@
     .selected-piece {
         filter: invert(59%) sepia(98%) saturate(738%) hue-rotate(354deg) brightness(97%) contrast(98%) drop-shadow(-5px 5px 2px black);
     }
+    .checked-piece {
+        filter: invert(17%) sepia(74%) saturate(7185%) hue-rotate(359deg) brightness(96%) contrast(119%);
+    }
 }

@@ -17,7 +17,7 @@ type boardBox = {
 
 const ChessBoard = () => {
 
-    const { user, ai, selectPiece, selectedChessPiece, moveChessPiece, moveAiPiece } = useChessContext();
+    const { user, ai, selectPiece, selectedChessPiece, aiKingChecked, userKingChecked, moveChessPiece, moveAiPiece } = useChessContext();
 
     const [board, setBoard] = useState<boardBox[]>([]);
 
@@ -101,10 +101,18 @@ const ChessBoard = () => {
                         
                         <div 
                             id={`piece-${userPieceExists.position}`}
-                            onClick={user.turn ? () => selectPiece(userPieceExists) : undefined}
+                            onClick={
+                                user.turn 
+                                ? 
+                                    () => {
+                                        if(userKingChecked && userPieceExists.type !== 'king') return;
+                                        else selectPiece(userPieceExists);
+                                    } 
+                                : undefined
+                            }
                         >
-                            <img className={user.turn ? 'white-piece w-full cursor-pointer hover:piece-hover'
-                                : ''
+                            <img className={user.turn && !userKingChecked ? 'white-piece cursor-pointer hover:piece-hover'
+                                : `${userPieceExists.checked ? "checked-piece cursor-pointer" : "white-piece"}`
                             }
                                 src={determineCorrectImg(userPieceExists)} alt="" 
                             />
@@ -119,11 +127,17 @@ const ChessBoard = () => {
             if(aiPieceExists.alive) {
                 return (
                     <div>
-                        <img className="w-full" src={determineCorrectImg(aiPieceExists)} alt="" />
+                        <img className={aiPieceExists.type === 'king' && aiKingChecked 
+                                ? 'checked-piece' 
+                                : ''
+                            } 
+                            src={determineCorrectImg(aiPieceExists)} alt="" 
+                        />
                     </div>
                 )
             }
         }
+
     }
 
     // Board box hover to show if peice can move there or not
@@ -167,9 +181,28 @@ const ChessBoard = () => {
 
     // Randomly moves AI pieces
     function randomlyMovePiece(): void {
+
+        let randomPiece;
+
+        // If the king is checked, attempt to move the king
+
+        /**
+            TODO: can make this better because it currently will look to move 
+            the king to any of the 64 squares on the board, when the king can 
+            only possibly move to 8 boxes, maybe determing the 8 positions it 
+            can go to then loop through those
+
+        */
+
+
+        if (aiKingChecked) {
+            const king = ai.pieces.find(piece => piece.type === 'king');
+
+            randomPiece = king;
+        }
         
         // Random piece
-        const randomPiece = ai.pieces[Math.floor(Math.random() * ai.pieces.length)];
+        randomPiece = ai.pieces[Math.floor(Math.random() * ai.pieces.length)];
 
         if (randomPiece.alive) {
 
@@ -194,7 +227,7 @@ const ChessBoard = () => {
     }
 
     return (
-        <div className="p-4 grid justify-items-center items-center grid-cols-8 w-screen-1/2 h-boardHeight ">
+        <div className="p-4 grid justify-items-center items-center grid-cols-8 grid-rows-boardRows w-screen-1/2 h-boardHeight ">
 
             {board.map((box, i) => {
                 return (   

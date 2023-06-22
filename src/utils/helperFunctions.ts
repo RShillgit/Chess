@@ -16,7 +16,11 @@ export function createUser(player: 'user' | 'ai'): Player {
             else if (piece.type === 'knight') return Knight(piece.owner, piece.position, piece.alive);
             else if (piece.type === 'bishop') return Bishop(piece.owner, piece.position, piece.alive);
             else if (piece.type === 'queen') return Queen(piece.owner, piece.position, piece.alive);
-            else if (piece.type === 'king') return King(piece.owner, piece.position, piece.alive);
+            else if (piece.type === 'king') {
+                if (piece.checked) {
+                    return King(piece.owner, piece.position, piece.checked, piece.alive);
+                } else return King(piece.owner, piece.position, false, piece.alive);
+            }
             else return piece;
         })
 
@@ -73,7 +77,7 @@ export function generateInitialPieces(player: 'user' | 'ai'): Piece[] {
         Queen(player, (player === 'user' ? "d1": "d8")),
 
         // King
-        King(player, (player === 'user' ? "e1": "e8")),
+        King(player, (player === 'user' ? "e1": "e8"), false),
     ];
 
     return initialPieces;

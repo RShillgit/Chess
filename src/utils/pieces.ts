@@ -375,12 +375,13 @@ export function Queen(player: 'user' | 'ai', position: string, alive?: boolean):
 }
 
 // King
-export function King(player: 'user' | 'ai', position: string, alive?: boolean): Piece {
+export function King(player: 'user' | 'ai', position: string, checked: boolean, alive?: boolean): Piece {
     return {
         id: uuidv4(),
         type: 'king',
         owner: player,
         alive: (alive !== undefined ? alive : true),
+        checked: (checked !== undefined ? checked : false),
         position: position,
 
         // Checks if piece can move to the location
@@ -511,4 +512,3 @@ function pieceInPath (path: 'column' | 'row' | 'diagonal', position: string, loc
     if (pieceInbetween) return true;
     return false;
 }
-
