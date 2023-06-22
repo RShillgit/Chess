@@ -389,9 +389,30 @@ export function King(player: 'user' | 'ai', position: string, checked: boolean, 
 
             if (position === location) return false;
 
+            // Off the board
+            if (location[0].charCodeAt(0) < 97 || location[0].charCodeAt(0) > 104 || Number(location[1]) < 1 || Number(location[1]) > 8) return false;
+
             // If there is a friendly piece at that location return false;
             const friendlyAtPosition = usersPieces.find(piece => piece.alive && piece.position === location);
             if (friendlyAtPosition) return false;
+
+            // TODO: EXCLUDES ENEMY KING BECAUSE IT RESULTS IN ENDLESS "canMove" LOOP
+            const aliveEnemyPieces = enemyPieces.filter(piece => piece.alive && piece.type !== 'king');
+
+            // Pieces array if the piece was moved to the location, that way we can assess if it will be checked there
+            const usersPiecesInludingThisMove = usersPieces.map(piece => {
+                if (piece.alive && piece.type === 'king') {
+                    const futurePiece = {
+                        ...piece,
+                        position: location
+                    }
+                    return futurePiece;
+                }
+                return piece;
+            })
+
+            // If it will be checked at the location return false 
+            if (aliveEnemyPieces.some(piece => piece.canMove(location, usersPiecesInludingThisMove, enemyPieces))) return false;
             
             // Column
             else if (location[0] === position[0]) {

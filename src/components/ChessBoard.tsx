@@ -66,6 +66,12 @@ const ChessBoard = () => {
 
         if (ai.turn) {
 
+            // Checked king
+            if (aiKingChecked) {
+                moveCheckedKing();
+                return;
+            }
+
             // See if any of the AI pieces can eleminate a user piece
             for (let i = 0; i < ai.pieces.length; i++) {
                 for (let j = 0; j < user.pieces.length; j++) {
@@ -81,6 +87,7 @@ const ChessBoard = () => {
             }
             // If not, select a random piece and move it to a random location
             randomlyMovePiece();
+            return;
 
         }
 
@@ -101,18 +108,10 @@ const ChessBoard = () => {
                         
                         <div 
                             id={`piece-${userPieceExists.position}`}
-                            onClick={
-                                user.turn 
-                                ? 
-                                    () => {
-                                        if(userKingChecked && userPieceExists.type !== 'king') return;
-                                        else selectPiece(userPieceExists);
-                                    } 
-                                : undefined
-                            }
+                            onClick={() => user.turn ? selectPiece(userPieceExists) : undefined }
                         >
                             <img className={user.turn && !userKingChecked ? 'white-piece cursor-pointer hover:piece-hover'
-                                : `${userPieceExists.checked ? "checked-piece cursor-pointer" : "white-piece"}`
+                                : `${userPieceExists.checked ? "checked-piece cursor-pointer" : "white-piece cursor-pointer hover:piece-hover"}`
                             }
                                 src={determineCorrectImg(userPieceExists)} alt="" 
                             />
@@ -182,29 +181,9 @@ const ChessBoard = () => {
     // Randomly moves AI pieces
     function randomlyMovePiece(): void {
 
-        let randomPiece;
+        const randomPiece = ai.pieces[Math.floor(Math.random() * ai.pieces.length)];
 
-        // If the king is checked, attempt to move the king
-
-        /**
-            TODO: can make this better because it currently will look to move 
-            the king to any of the 64 squares on the board, when the king can 
-            only possibly move to 8 boxes, maybe determing the 8 positions it 
-            can go to then loop through those
-
-        */
-
-
-        if (aiKingChecked) {
-            const king = ai.pieces.find(piece => piece.type === 'king');
-
-            randomPiece = king;
-        }
-        
-        // Random piece
-        randomPiece = ai.pieces[Math.floor(Math.random() * ai.pieces.length)];
-
-        if (randomPiece.alive) {
+        if (randomPiece && randomPiece.alive) {
 
             // Random box
             const randomBox = board[Math.floor(Math.random() * board.length)].position;
@@ -224,6 +203,35 @@ const ChessBoard = () => {
         else if (piece.type === 'bishop') return bishopImg;
         else if (piece.type === 'queen') return queenImg;
         else if (piece.type === 'king') return kingImg;
+    }
+
+    const moveCheckedKing = () => {
+
+        const king = ai.pieces.find(piece => piece.alive && piece.type === 'king');
+
+        if (king) {
+
+            // Determine all of the kings possible moves
+            const allPossibleMoves = [
+                `${String.fromCharCode(king.position[0].charCodeAt(0) - 1)}${Number(king.position[1]) + 1}`, // Left 1, Up 1
+                `${king.position[0]}${Number(king.position[1]) + 1}`, // Up 1
+                `${String.fromCharCode(king.position[0].charCodeAt(0) + 1)}${Number(king.position[1]) + 1}`, // Right 1, Up 1
+                `${String.fromCharCode(king.position[0].charCodeAt(0) - 1)}${king.position[1]}`, // Left 1
+                `${String.fromCharCode(king.position[0].charCodeAt(0) + 1)}${king.position[1]}`, // Right 1
+                `${String.fromCharCode(king.position[0].charCodeAt(0) - 1)}${Number(king.position[1]) - 1}`, // Left 1, down 1
+                `${king.position[0]}${Number(king.position[1]) - 1}`, // Down 1
+                `${String.fromCharCode(king.position[0].charCodeAt(0) + 1)}${Number(king.position[1]) - 1}`, // Right 1, down 1
+            ]
+
+            for (let i = 0; i < allPossibleMoves.length; i++) {
+
+                if (king.canMove(allPossibleMoves[i], user.pieces, ai.pieces)) {
+                    return moveAiPiece(king, allPossibleMoves[i]);
+                }
+            }
+
+        }
+        return;
     }
 
     return (
