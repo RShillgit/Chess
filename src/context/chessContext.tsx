@@ -169,7 +169,7 @@ export function ChessContextProvider( { children }: ChessContextProviderProps ) 
 
             // AI's king is checked
             if (user.pieces.filter(piece => piece.alive).some(piece => piece.alive && piece.canMove(aiKing.position, ai.pieces, user.pieces))) {
-                console.log("AI's King Is Checked!!!!!!");
+                
                 setAiKingChecked(true);
     
                 setAi(prevAi => {
@@ -200,7 +200,7 @@ export function ChessContextProvider( { children }: ChessContextProviderProps ) 
 
             // User's king is checked
             if (ai.pieces.filter(piece => piece.alive).some(piece => piece.alive && piece.canMove(userKing.position, user.pieces, ai.pieces))) {
-                console.log("User's King Is Checked!!!!!!");
+                
                 setUserKingChecked(true);
     
                 setUser(prevUser => {

@@ -1,6 +1,6 @@
 import React, { FC, ReactNode, useEffect, useState } from "react"
 import { useChessContext } from "../context/chessContext";
-import { Piece } from "../types/chessTypes";
+import { Piece, Player } from "../types/chessTypes";
 
 import pawnImg from '../assets/pawn.png';
 import rookImg from '../assets/rook.png';
@@ -150,9 +150,9 @@ const ChessBoard = () => {
             if (userPieceExists) return false;
 
             const moveViable = selectedChessPiece.canMove(e.currentTarget.id, ai.pieces, user.pieces);
-            
+
             // Green if piece can go there
-            if (moveViable) {
+            if (moveViable && !kingWillBeChecked(selectedChessPiece, e.currentTarget.id, user, ai)) {
                 e.currentTarget.classList.add("hover:shadow-valid-hover", "cursor-pointer", "hover:relative", "hover:z-10");
                 return true;
             }
@@ -232,6 +232,64 @@ const ChessBoard = () => {
 
         }
         return;
+    }
+
+    // Checks if the move you're about to make will put your king in check
+    const kingWillBeChecked = (piece : Piece, location: string, user: Player, enemy: Player) => {
+
+        const king = user.pieces.find(p => p.type === 'king');
+
+        if (king) {
+
+            // A copy used to determine the future after this move
+            let enemyPiecesIncludingThisMove: Piece[] = [];
+
+            const aliveEnemyPieces = enemy.pieces.filter(piece => piece.alive);
+
+            // Pieces array if the piece was moved to the location, that way we can assess if it will be checked there
+            const usersPiecesInludingThisMove = user.pieces.map(p => {
+
+                if (p.id === piece.id) {
+                    const futurePiece = {
+                        ...p,
+                        position: location
+                    }
+
+                    // If there is an enemy here, eliminate them in the "future" array
+                    const enemyAtThisLocation = enemy.pieces.find(p => p.alive && p.position === location);
+                    if (enemyAtThisLocation) {
+                        
+                        enemyPiecesIncludingThisMove = enemy.pieces.map(p => {
+                            if (p.id === enemyAtThisLocation.id) {
+                                const futurePiece = {
+                                    ...p,
+                                    alive: false
+                                }
+                                return futurePiece;
+                            } else {
+                                enemyPiecesIncludingThisMove = [...enemy.pieces];
+                                return p;
+                            }
+                        })
+                        
+                    } 
+                    
+                    else {
+                        enemyPiecesIncludingThisMove = [...enemy.pieces];
+                    }
+
+                    return futurePiece;
+                    
+                } 
+                return p;
+            })
+
+            const newKing = usersPiecesInludingThisMove.find(p => p.type === 'king');
+    
+            // If it will be checked at the location return false 
+            if (newKing && aliveEnemyPieces.find(p => p.canMove(newKing.position, usersPiecesInludingThisMove, enemyPiecesIncludingThisMove))) return true;
+            else return false;
+        } else return false;
     }
 
     return (
