@@ -46,7 +46,7 @@ const App = () => {
           
   */
 
-  const { user, ai, selectedChessPiece, selectPiece } = useChessContext();
+  const { user, ai, selectedChessPiece, selectPiece, declareWinner, winner, restartGame } = useChessContext();
 
   const graveyardStyles = [
     ""
@@ -56,6 +56,29 @@ const App = () => {
     console.log(user)
     console.log(ai)
   }, [])
+
+  useEffect(() => {
+
+    if (winner) {
+      const dialog = document.getElementById('winner-modal') as HTMLDialogElement;
+
+      if (dialog) {
+        dialog.showModal();
+      }
+
+    }
+
+  }, [winner])
+
+  const restart = () => {
+    const dialog = document.getElementById('winner-modal') as HTMLDialogElement;
+
+    if (dialog) {
+      dialog.close();
+    }
+
+    restartGame();
+  }
 
   // Displays dead pieces
   const pieceGraveyard = (player: 'user' | 'ai') => {
@@ -123,6 +146,18 @@ const App = () => {
         </div>
 
       </div>
+
+      {winner
+        ?
+        <>
+          <dialog id="winner-modal">
+            <h1>{winner.name === 'ai' ? 'You Lose!' : 'You Win'}</h1>
+            <p>{winner.name}</p>
+            <button onClick={restart}>Restart</button>
+          </dialog>
+        </>
+        :<></>
+      }
 
     </div>
   )

@@ -12,9 +12,12 @@ type ChessContext = {
     selectedChessPiece: (Piece | null),
     aiKingChecked: boolean,
     userKingChecked: boolean,
+    winner: (Player | null),
     selectPiece: (piece: Piece | null) => void,
     moveChessPiece: (newPosition: string, enemy: Player) => void,
     moveAiPiece: (piece: Piece, destination: string) => void,
+    declareWinner: (player: Player) => void,
+    restartGame: () => void,
 }
 
 const chessContext = createContext({} as ChessContext)
@@ -34,6 +37,8 @@ export function ChessContextProvider( { children }: ChessContextProviderProps ) 
     // Checked Kings
     const [userKingChecked, setUserKingChecked] = useState(false);
     const [aiKingChecked, setAiKingChecked] = useState(false);
+
+    const [winner, setWinner] = useState<Player | null>(null);
 
     // On mount check for checked kings
     useEffect(() => {
@@ -228,11 +233,30 @@ export function ChessContextProvider( { children }: ChessContextProviderProps ) 
             }
         }
 
+        setWinner(null);
+
     }
 
+    const declareWinner = (player: Player) => {
+        setWinner(player)
+    }
+
+    // Restart game by resetting state values
+    const restartGame = () => {
+
+        setWinner(null);
+        setAiKingChecked(false)
+        setUserKingChecked(false);
+        setSelectedChessPiece(null);
+
+        localStorage.clear();
+        setUser(createUser('user'));
+        setAi(createUser('ai'));
+
+    }
 
     return (
-        <chessContext.Provider value={{user, ai, selectedChessPiece, aiKingChecked, userKingChecked, selectPiece, moveChessPiece, moveAiPiece}} >
+        <chessContext.Provider value={{user, ai, selectedChessPiece, aiKingChecked, userKingChecked, winner, selectPiece, moveChessPiece, moveAiPiece, declareWinner, restartGame}} >
             {children}
         </chessContext.Provider>
     )

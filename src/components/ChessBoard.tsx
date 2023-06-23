@@ -17,7 +17,7 @@ type boardBox = {
 
 const ChessBoard = () => {
 
-    const { user, ai, selectPiece, selectedChessPiece, aiKingChecked, userKingChecked, moveChessPiece, moveAiPiece } = useChessContext();
+    const { user, ai, selectPiece, selectedChessPiece, aiKingChecked, userKingChecked, winner, moveChessPiece, moveAiPiece, declareWinner } = useChessContext();
 
     const [board, setBoard] = useState<boardBox[]>([]);
 
@@ -64,7 +64,7 @@ const ChessBoard = () => {
     // On AI turn change impliment movement
     useEffect(() => {
 
-        if (ai.turn) {
+        if (ai.turn && !winner) {
 
             // Checked king
             if (aiKingChecked) {
@@ -100,6 +100,47 @@ const ChessBoard = () => {
 
     }, [ai])
 
+    // On checked king change check for check mate
+    useEffect(() => {
+
+        if (userKingChecked)  {
+
+            const king = user.pieces.find(piece => piece.alive && piece.type === 'king');
+            if (king) {
+
+                // Determine all of the kings possible moves
+                const allPossibleMoves = [
+                    `${String.fromCharCode(king.position[0].charCodeAt(0) - 1)}${Number(king.position[1]) + 1}`, // Left 1, Up 1
+                    `${king.position[0]}${Number(king.position[1]) + 1}`, // Up 1
+                    `${String.fromCharCode(king.position[0].charCodeAt(0) + 1)}${Number(king.position[1]) + 1}`, // Right 1, Up 1
+                    `${String.fromCharCode(king.position[0].charCodeAt(0) - 1)}${king.position[1]}`, // Left 1
+                    `${String.fromCharCode(king.position[0].charCodeAt(0) + 1)}${king.position[1]}`, // Right 1
+                    `${String.fromCharCode(king.position[0].charCodeAt(0) - 1)}${Number(king.position[1]) - 1}`, // Left 1, down 1
+                    `${king.position[0]}${Number(king.position[1]) - 1}`, // Down 1
+                    `${String.fromCharCode(king.position[0].charCodeAt(0) + 1)}${Number(king.position[1]) - 1}`, // Right 1, down 1
+                ]
+    
+                for (let i = 0; i < allPossibleMoves.length; i++) {
+    
+                    if (userKingChecked) {
+    
+                        // User not check mate
+                        if (king.canMove(allPossibleMoves[i], user.pieces, ai.pieces) && !kingWillBeChecked(king, allPossibleMoves[i], ai, user)) {
+                            return;
+                        }
+      
+                    }
+                }
+                // User check mate
+                return checkMate(user);            
+    
+            }
+        }
+
+
+
+    }, [userKingChecked])
+
     // Checks if piece exists on location
     const checkPieceLocation = (position: string) => {
 
@@ -115,7 +156,7 @@ const ChessBoard = () => {
                         
                         <div 
                             id={`piece-${userPieceExists.position}`}
-                            onClick={() => user.turn ? selectPiece(userPieceExists) : undefined }
+                            onClick={() => user.turn && !winner ? selectPiece(userPieceExists) : undefined }
                         >
                             <img className={user.turn && !userKingChecked ? 'white-piece cursor-pointer hover:piece-hover'
                                 : `${userPieceExists.checked ? "checked-piece cursor-pointer" : "white-piece cursor-pointer hover:piece-hover"}`
@@ -204,6 +245,7 @@ const ChessBoard = () => {
         
     }
 
+    // Determines correct image for chess pieces
     const determineCorrectImg = (piece: Piece) => {
         if (piece.type === 'pawn') return pawnImg;
         else if (piece.type === 'rook') return rookImg;
@@ -238,7 +280,8 @@ const ChessBoard = () => {
                 }
             }
 
-            console.log("CHECK MATE");
+            // AI Check Mate
+            return checkMate(ai);
 
         }
         return;
@@ -297,14 +340,17 @@ const ChessBoard = () => {
             const newKing = usersPiecesInludingThisMove.find(p => p.type === 'king');
     
             // If it will be checked at the location return true
-            if (newKing && aliveEnemyPieces.find(p => p.canMove(newKing.position, usersPiecesInludingThisMove, enemyPiecesIncludingThisMove))) {
-                console.log("new king", newKing)
-                console.log("new enemy pieces", enemyPiecesIncludingThisMove)
-                console.log("new users pieces", usersPiecesInludingThisMove)
+            if (newKing && enemyPiecesIncludingThisMove.find(p => p.alive && p.canMove(newKing.position, usersPiecesInludingThisMove, enemyPiecesIncludingThisMove))) {
                 return true;
             }
             else return false;
         } else return false;
+    }
+
+    const checkMate = (player: Player) => {
+
+        if (player.name === 'ai') declareWinner(user);
+        else if (player.name === 'user') declareWinner(ai);
     }
 
     return (
