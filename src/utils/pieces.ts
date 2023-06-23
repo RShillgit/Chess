@@ -114,6 +114,12 @@ export function Pawn(player: 'user' | 'ai', position: string, alive?: boolean): 
                     })
                     if(enemyAtHover) return false;
 
+                    // If there is an alive friendly at the hover location return false
+                    const friendlyAtHover = usersPieces.find(piece => {
+                        return piece.alive && piece.position === `${location[0]}${Number(location[1])}`
+                    })
+                    if(friendlyAtHover) return false;
+
                     // Hovering in the same column
                     else if (location[0] === position[0]) {
 
@@ -132,6 +138,12 @@ export function Pawn(player: 'user' | 'ai', position: string, alive?: boolean): 
                         return piece.alive && piece.position === `${position[0]}${Number(position[1]) - 1}`
                     })
                     if (enemyInFront) return false;
+
+                    // If there is an alive friendly in front return false
+                    const friendlyInFront = usersPieces.find(piece => {
+                        return piece.alive && piece.position === `${position[0]}${Number(position[1]) - 1}`
+                    })
+                    if(friendlyInFront) return false;
 
                     // Hovering in the same column
                     if (location[0] === position[0]) {

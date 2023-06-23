@@ -80,9 +80,12 @@ const ChessBoard = () => {
                     for (let j = 0; j < user.pieces.length; j++) {
 
                         if (ai.pieces[i].alive && user.pieces[j].alive) {
-                            if (ai.pieces[i].canMove(user.pieces[j].position, user.pieces, ai.pieces) && !kingWillBeChecked(king, user.pieces[j].position, ai, user)) {
-                                moveAiPiece(ai.pieces[i], user.pieces[j].position);
-                                return;
+
+                            if (ai.pieces[i].canMove(user.pieces[j].position, user.pieces, ai.pieces)) {
+                                if (!kingWillBeChecked(ai.pieces[i], user.pieces[j].position, ai, user)) {
+                                    moveAiPiece(ai.pieces[i], user.pieces[j].position);
+                                    return;
+                                }
                             }
                         }
                     }
@@ -193,7 +196,7 @@ const ChessBoard = () => {
             // Random box
             const randomBox = board[Math.floor(Math.random() * board.length)].position;
 
-            if(randomPiece.canMove(randomBox, user.pieces, ai.pieces) && !kingWillBeChecked(king, randomBox, ai, user)) {
+            if(randomPiece.canMove(randomBox, user.pieces, ai.pieces) && !kingWillBeChecked(randomPiece, randomBox, ai, user)) {
                 return moveAiPiece(randomPiece, randomBox);
             }
             else return randomlyMovePiece();
@@ -294,7 +297,12 @@ const ChessBoard = () => {
             const newKing = usersPiecesInludingThisMove.find(p => p.type === 'king');
     
             // If it will be checked at the location return true
-            if (newKing && aliveEnemyPieces.find(p => p.canMove(newKing.position, usersPiecesInludingThisMove, enemyPiecesIncludingThisMove))) return true;
+            if (newKing && aliveEnemyPieces.find(p => p.canMove(newKing.position, usersPiecesInludingThisMove, enemyPiecesIncludingThisMove))) {
+                console.log("new king", newKing)
+                console.log("new enemy pieces", enemyPiecesIncludingThisMove)
+                console.log("new users pieces", usersPiecesInludingThisMove)
+                return true;
+            }
             else return false;
         } else return false;
     }
