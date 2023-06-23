@@ -126,13 +126,13 @@ const App = () => {
   }
 
   return (
-    <div>
-      <h1 className="flex justify-center text-3xl translate-y-">Chess</h1>
+    <div className="bg-neutral-800 min-h-screen">
+      <h1 className="flex pt-4 font-bold text-white justify-center text-3xl translate-y-">Chess</h1>
 
       <div className="flex justify-center p-4">
 
         <div className="py-4 pb-4">
-          <h1 className="text-2xl">You</h1>
+          <h1 className="text-2xl pb-4 text-center text-white">You</h1>
           {pieceGraveyard('user')}
         </div>
 
@@ -141,7 +141,7 @@ const App = () => {
         </div>
 
         <div className="py-4 pb-4">
-          <h1 className="text-2xl">Enemy</h1>
+          <h1 className="text-2xl pb-4 text-center text-white">Enemy</h1>
           {pieceGraveyard('ai')}
         </div>
 
@@ -150,10 +150,15 @@ const App = () => {
       {winner
         ?
         <>
-          <dialog id="winner-modal">
-            <h1>{winner.name === 'ai' ? 'You Lose!' : 'You Win'}</h1>
-            <p>{winner.name}</p>
-            <button onClick={restart}>Restart</button>
+          <dialog id="winner-modal" className="flex justify-center items-center flex-col w-6/12 rounded-lg bg-black bg-opacity-90" >
+
+            <h1 className="text-3xl text-white font-bold text-center">{winner.name === 'ai' ? 'You Lose!' : 'You Win!'}</h1>
+
+            <button onClick={restart} className="border text-white border-white p-1 rounded-md text-lg
+              hover:shadow-restart-button"
+            >
+              Restart
+            </button>
           </dialog>
         </>
         :<></>

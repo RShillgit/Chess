@@ -43,6 +43,11 @@ export function ChessContextProvider( { children }: ChessContextProviderProps ) 
     // On mount check for checked kings
     useEffect(() => {
         opponentKingIsChecked();
+
+        const storedWinner = localStorage.getItem('winner');
+        if (storedWinner && JSON.parse(storedWinner) === 'user') setWinner(user);
+        else if (storedWinner && JSON.parse(storedWinner) === 'ai') setWinner(ai);
+
     }, [])
 
     const selectPiece = (piece: Piece | null) => {
@@ -238,7 +243,8 @@ export function ChessContextProvider( { children }: ChessContextProviderProps ) 
     }
 
     const declareWinner = (player: Player) => {
-        setWinner(player)
+        localStorage.setItem('winner', player.name);
+        setWinner(player);
     }
 
     // Restart game by resetting state values

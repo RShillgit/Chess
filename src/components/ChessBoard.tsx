@@ -230,9 +230,11 @@ const ChessBoard = () => {
     function randomlyMovePiece(): void {
 
         const randomPiece = ai.pieces[Math.floor(Math.random() * ai.pieces.length)];
-        const king = ai.pieces.find(p => p.type === 'king');
+        const enemyking = user.pieces.find(p => p.type === 'king');
 
-        if (king && randomPiece && randomPiece.alive) {
+        if (enemyking && randomPiece && randomPiece.alive) {
+
+            // TODO: Try to move toward enemy king
 
             // Random box
             const randomBox = board[Math.floor(Math.random() * board.length)].position;
@@ -354,29 +356,32 @@ const ChessBoard = () => {
     }
 
     return (
-        <div className="p-4 grid justify-items-center items-center grid-cols-8 grid-rows-boardRows w-screen-1/2 h-boardHeight ">
+        <div className="ml-6 mr-6 shadow-chess-board rounded-xl bg-dark-box">
+            <div className="p-4 grid justify-items-center items-center grid-cols-8 grid-rows-boardRows w-screen-1/2 h-boardHeight 
+                "
+            >
 
-            {board.map((box, i) => {
-                return (   
-                    <div key={i} id={box.position} className={`flex justify-center items-center w-full h-full border border-slate-950
-                        ${box.color === 'dark' ? 'bg-slate-800 text-white' : 'bg-slate-400 text-black'}`}
-                        onMouseOver={(e) => checkViableMove(e)}
-                        onMouseOut={(e) => {
-                                if (selectedChessPiece) {
-                                    e.currentTarget.classList.remove("hover:shadow-valid-hover", "hover:shadow-invalid-hover",
-                                    "hover:relative", "hover:z-10", "cursor-pointer")
+                {board.map((box, i) => {
+                    return (   
+                        <div key={i} id={box.position} className={`flex justify-center items-center w-full h-full border border-white
+                            ${box.color === 'dark' ? 'bg-dark-box text-white' : 'bg-light-box text-black'}`}
+                            onMouseOver={(e) => checkViableMove(e)}
+                            onMouseOut={(e) => {
+                                    if (selectedChessPiece) {
+                                        e.currentTarget.classList.remove("hover:shadow-valid-hover", "hover:shadow-invalid-hover",
+                                        "hover:relative", "hover:z-10", "cursor-pointer")
+                                    }
                                 }
                             }
-                        }
-                        onClick={(e) => movePiece(e)}
-                    >{box.position}
+                            onClick={(e) => movePiece(e)}
+                        >{box.position}
 
-                        {checkPieceLocation(box.position)}
-                    
-                    </div>
-                )
-            })}
-
+                            {checkPieceLocation(box.position)}
+                        
+                        </div>
+                    )
+                })}
+            </div>
         </div>
     )
 
