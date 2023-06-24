@@ -124,8 +124,8 @@ const ChessBoard = () => {
     
                     if (userKingChecked) {
     
-                        // User not check mate
-                        if (king.canMove(allPossibleMoves[i], user.pieces, ai.pieces) && !kingWillBeChecked(king, allPossibleMoves[i], ai, user)) {
+                        // User not check mate 
+                        if (king.canMove(allPossibleMoves[i], user.pieces, ai.pieces) && !kingWillBeChecked(king, allPossibleMoves[i], user, ai)) {
                             return;
                         }
       
@@ -136,8 +136,6 @@ const ChessBoard = () => {
     
             }
         }
-
-
 
     }, [userKingChecked])
 
@@ -229,22 +227,46 @@ const ChessBoard = () => {
     // Randomly moves AI pieces
     function randomlyMovePiece(): void {
 
-        const randomPiece = ai.pieces[Math.floor(Math.random() * ai.pieces.length)];
+        const aliveAiPieces = ai.pieces.filter(p => p.alive);
+        const randomPiece = aliveAiPieces[Math.floor(Math.random() * aliveAiPieces.length)];
         const enemyking = user.pieces.find(p => p.type === 'king');
 
-        if (enemyking && randomPiece && randomPiece.alive) {
+        // Try to move toward enemy king
+        if (enemyking) {
+            // Board boxes that are closer to the enemy king
+            const closerBoxes = board.filter(box => {
 
-            // TODO: Try to move toward enemy king
+                // Random piece is above enemy king
+                if (Number(randomPiece.position[1]) > Number(enemyking.position[1])) {
+                    return Number(randomPiece.position[1]) > Number(box.position[1]) && Number(box.position[1]) >= Number(enemyking.position[1]);
+                }
+                // Random piece is below enemy king
+                else if (Number(randomPiece.position[1]) < Number(enemyking.position[1])) {
+                    return Number(enemyking.position[1]) > Number(box.position[1]) && Number(box.position[1]) >= Number(randomPiece.position[1]);
+                }
+                // Random piece is on the same row as the enemy king
+                else {
+                    
+                    // Random piece is to the left of the king
+                    if(randomPiece.position[0].charCodeAt(0) < enemyking.position[0].charCodeAt(0)) {
+                        return box.position[0].charCodeAt(0) > randomPiece.position[0].charCodeAt(0) && box.position[0].charCodeAt(0) <= enemyking.position[0].charCodeAt(0);
+                    }
+                    // Random piece is to the right of the king
+                    else if(randomPiece.position[0].charCodeAt(0) > enemyking.position[0].charCodeAt(0)) {
+                        return box.position[0].charCodeAt(0) < randomPiece.position[0].charCodeAt(0) && box.position[0].charCodeAt(0) >= enemyking.position[0].charCodeAt(0);
+                    }
 
-            // Random box
-            const randomBox = board[Math.floor(Math.random() * board.length)].position;
+                }
+            })
+            
+            for (let i = 0; i < closerBoxes.length; i++) {
 
-            if(randomPiece.canMove(randomBox, user.pieces, ai.pieces) && !kingWillBeChecked(randomPiece, randomBox, ai, user)) {
-                return moveAiPiece(randomPiece, randomBox);
+                if(randomPiece.canMove(closerBoxes[i].position, user.pieces, ai.pieces) && !kingWillBeChecked(randomPiece, closerBoxes[i].position, ai, user)) {
+                    return moveAiPiece(randomPiece, closerBoxes[i].position);
+                }
             }
-            else return randomlyMovePiece();
-        } else return randomlyMovePiece();
-        
+            return randomlyMovePiece();
+        }
     }
 
     // Determines correct image for chess pieces
@@ -299,8 +321,6 @@ const ChessBoard = () => {
             // A copy used to determine the future after this move
             let enemyPiecesIncludingThisMove: Piece[] = [];
 
-            const aliveEnemyPieces = enemy.pieces.filter(piece => piece.alive);
-
             // Pieces array if the piece was moved to the location, that way we can assess if it will be checked there
             const usersPiecesInludingThisMove = user.pieces.map(p => {
 
@@ -322,7 +342,6 @@ const ChessBoard = () => {
                                 }
                                 return futurePiece;
                             } else {
-                                enemyPiecesIncludingThisMove = [...enemy.pieces];
                                 return p;
                             }
                         })
