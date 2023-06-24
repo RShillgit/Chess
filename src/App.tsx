@@ -10,7 +10,7 @@ import bishopImg from './assets/bishop.png';
 
 const App = () => {
 
-  const { user, ai, selectedChessPiece, pawnForPromotion, selectPiece, declareWinner, winner, restartGame, promotePawn } = useChessContext();
+  const { user, ai, selectedChessPiece, pawnForPromotion, selectPiece, declareWinner, winner, staleMate, restartGame, promotePawn } = useChessContext();
 
   const graveyardStyles = [
     ""
@@ -25,21 +25,25 @@ const App = () => {
   // Modals
   useEffect(() => {
 
+    // Stale Mate modal
+    if (staleMate) {
+      const staleMateModal = document.getElementById('stale-mate-modal') as HTMLDialogElement;
+      if (staleMateModal) staleMateModal.showModal();
+    }
+
     // Winner modal
     if (winner) {
       const dialog = document.getElementById('winner-modal') as HTMLDialogElement;
-
       if (dialog) dialog.showModal();
     }
 
     // Promotion modal
     else if (pawnForPromotion) {
       const pawnModal = document.getElementById('promotion-modal') as HTMLDialogElement;
-
       if (pawnModal) pawnModal.showModal();
     }
 
-  }, [winner, pawnForPromotion])
+  }, [winner, pawnForPromotion, staleMate])
 
   const restart = () => {
     const dialog = document.getElementById('winner-modal') as HTMLDialogElement;
@@ -158,6 +162,22 @@ const App = () => {
               <img className="white-piece cursor-pointer w-16 hover:piece-hover" src={bishopImg} alt="Bishop" onClick={() => promotion('bishop')}></img>
               <img className="white-piece cursor-pointer w-16 hover:piece-hover" src={knightImg} alt="Knight" onClick={() => promotion('knight')}></img>
             </div>
+          </dialog>
+        </>
+        :<></>
+      }
+
+      {staleMate
+        ?
+        <>
+          <dialog className="flex justify-center items-center flex-col w-6/12 rounded-lg bg-black bg-opacity-90" id="stale-mate-modal">
+            <h1 className="text-3xl text-white font-bold text-center">Stale Mate!</h1>
+
+            <button onClick={restart} className="border text-white border-white p-1 rounded-md text-lg
+              hover:shadow-restart-button"
+            >
+              Restart
+            </button>
           </dialog>
         </>
         :<></>

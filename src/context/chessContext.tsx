@@ -15,6 +15,7 @@ type ChessContext = {
     userKingChecked: boolean,
     pawnForPromotion: (Piece | null),
     winner: (Player | null),
+    staleMate: boolean,
     selectPiece: (piece: Piece | null) => void,
     moveChessPiece: (newPosition: string, enemy: Player) => void,
     moveAiPiece: (piece: Piece, destination: string) => void,
@@ -45,6 +46,7 @@ export function ChessContextProvider( { children }: ChessContextProviderProps ) 
     const [pawnForPromotion, setPawnForPromotion] = useState<Piece | null>(null);
 
     const [winner, setWinner] = useState<Player | null>(null);
+    const [staleMate, setStaleMate] = useState(false);
 
     // On mount check for checked kings
     useEffect(() => {
@@ -55,6 +57,15 @@ export function ChessContextProvider( { children }: ChessContextProviderProps ) 
         else if (storedWinner && JSON.parse(storedWinner) === 'ai') setWinner(ai);
 
     }, [])
+
+    // Check for a stale mate
+    useEffect(() => {
+
+        if (ai.pieces.filter(p => p.alive).length === 1 && user.pieces.filter(p => p.alive).length === 1) {
+            setStaleMate(true);
+        }
+
+    }, [ai, user])
 
     const selectPiece = (piece: Piece | null) => {
 
@@ -270,6 +281,7 @@ export function ChessContextProvider( { children }: ChessContextProviderProps ) 
     const restartGame = () => {
 
         setWinner(null);
+        setStaleMate(false);
         setAiKingChecked(false)
         setUserKingChecked(false);
         setSelectedChessPiece(null);
@@ -368,7 +380,7 @@ export function ChessContextProvider( { children }: ChessContextProviderProps ) 
     }
 
     return (
-        <chessContext.Provider value={{user, ai, selectedChessPiece, aiKingChecked, userKingChecked, pawnForPromotion ,winner, selectPiece, moveChessPiece, moveAiPiece, declareWinner, restartGame, promotePawn}} >
+        <chessContext.Provider value={{user, ai, selectedChessPiece, aiKingChecked, userKingChecked, pawnForPromotion ,winner, staleMate, selectPiece, moveChessPiece, moveAiPiece, declareWinner, restartGame, promotePawn}} >
             {children}
         </chessContext.Provider>
     )
