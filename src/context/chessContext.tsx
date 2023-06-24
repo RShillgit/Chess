@@ -20,7 +20,7 @@ type ChessContext = {
     moveAiPiece: (piece: Piece, destination: string) => void,
     declareWinner: (player: Player) => void,
     restartGame: () => void,
-    promotePawn : (pawn: Piece, nextType: 'queen' | 'rook' | 'bishop' | 'knight') => void,
+    promotePawn : (pawn: Piece, nextType: string) => void,
 }
 
 const chessContext = createContext({} as ChessContext)
@@ -151,6 +151,14 @@ export function ChessContextProvider( { children }: ChessContextProviderProps ) 
                 pieces: updatedEnemyPieces,
                 turn: true
             }
+
+            // Pawn Promotion
+            if (piece.type === 'pawn' && Number(destination[1]) === 1) {
+                const typeOptions = ['queen', 'rook', 'bishop', 'knight'];
+                const randomType = typeOptions[Math.floor(Math.random() * typeOptions.length)];
+                promotePawn(piece, randomType);
+            }
+
             localStorage.setItem('user', JSON.stringify(newUser));
             return newUser;
 
@@ -273,9 +281,11 @@ export function ChessContextProvider( { children }: ChessContextProviderProps ) 
     }
 
     // Promotes pawn to new piece
-    const promotePawn = (pawn: Piece, nextType: 'queen' | 'rook' | 'bishop' | 'knight') => {
+    const promotePawn = (pawn: Piece, nextType: string) => {
 
-        const indexOfPawn = user.pieces.findIndex(p => p.id === pawn.id);
+        let indexOfPawn: number;
+        if (pawn.owner === 'user') indexOfPawn = user.pieces.findIndex(p => p.id === pawn.id);
+        else indexOfPawn = ai.pieces.findIndex(p => p.id === pawn.id);
 
         // Promote to Queen
         if (nextType === 'queen') {
@@ -289,7 +299,10 @@ export function ChessContextProvider( { children }: ChessContextProviderProps ) 
             }
             // Ai
             else {
-                return;
+                setAi((prevAi) => {
+                    prevAi.pieces[indexOfPawn] = Queen('ai', pawn.position);
+                    return prevAi;
+                })
             }
 
         }
@@ -305,7 +318,10 @@ export function ChessContextProvider( { children }: ChessContextProviderProps ) 
             }
             // Ai
             else {
-                return;
+                setAi((prevAi) => {
+                    prevAi.pieces[indexOfPawn] = Rook('ai', pawn.position);
+                    return prevAi;
+                })
             }
     
         }
@@ -321,7 +337,10 @@ export function ChessContextProvider( { children }: ChessContextProviderProps ) 
             }
             // Ai
             else {
-                return;
+                setAi((prevAi) => {
+                    prevAi.pieces[indexOfPawn] = Bishop('ai', pawn.position);
+                    return prevAi;
+                })
             }
     
         }
@@ -337,7 +356,10 @@ export function ChessContextProvider( { children }: ChessContextProviderProps ) 
             }
             // Ai
             else {
-                return;
+                setAi((prevAi) => {
+                    prevAi.pieces[indexOfPawn] = Knight('ai', pawn.position);
+                    return prevAi;
+                })
             }
         }
 

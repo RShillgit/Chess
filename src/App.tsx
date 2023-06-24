@@ -153,10 +153,10 @@ const App = () => {
             <h1 className="text-3xl text-white font-bold text-center">Pawn Promoted!</h1>
             <h2 className="text-2xl text-white font-bold text-center">Choose a piece to replace your pawn.</h2>
             <div className="flex justify-center">
-              <img className="white-piece cursor-pointer w-5" src={queenImg} alt="Queen" onClick={() => promotion('queen')}></img>
-              <img className="white-piece cursor-pointer w-5" src={rookImg} alt="Rook" onClick={() => promotion('rook')}></img>
-              <img className="white-piece cursor-pointer w-5" src={bishopImg} alt="Bishop" onClick={() => promotion('bishop')}></img>
-              <img className="white-piece cursor-pointer w-5" src={knightImg} alt="Knight" onClick={() => promotion('knight')}></img>
+              <img className="white-piece cursor-pointer w-16 hover:piece-hover" src={queenImg} alt="Queen" onClick={() => promotion('queen')}></img>
+              <img className="white-piece cursor-pointer w-16 hover:piece-hover" src={rookImg} alt="Rook" onClick={() => promotion('rook')}></img>
+              <img className="white-piece cursor-pointer w-16 hover:piece-hover" src={bishopImg} alt="Bishop" onClick={() => promotion('bishop')}></img>
+              <img className="white-piece cursor-pointer w-16 hover:piece-hover" src={knightImg} alt="Knight" onClick={() => promotion('knight')}></img>
             </div>
           </dialog>
         </>
