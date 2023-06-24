@@ -1,6 +1,7 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import { Piece, Player } from "../types/chessTypes";
 import { generateInitialPieces, createUser } from "../utils/helperFunctions";
+import { Bishop, Knight, Queen, Rook } from "../utils/pieces";
 
 type ChessContextProviderProps = {
     children: ReactNode
@@ -12,12 +13,14 @@ type ChessContext = {
     selectedChessPiece: (Piece | null),
     aiKingChecked: boolean,
     userKingChecked: boolean,
+    pawnForPromotion: (Piece | null),
     winner: (Player | null),
     selectPiece: (piece: Piece | null) => void,
     moveChessPiece: (newPosition: string, enemy: Player) => void,
     moveAiPiece: (piece: Piece, destination: string) => void,
     declareWinner: (player: Player) => void,
     restartGame: () => void,
+    promotePawn : (pawn: Piece, nextType: 'queen' | 'rook' | 'bishop' | 'knight') => void,
 }
 
 const chessContext = createContext({} as ChessContext)
@@ -37,6 +40,9 @@ export function ChessContextProvider( { children }: ChessContextProviderProps ) 
     // Checked Kings
     const [userKingChecked, setUserKingChecked] = useState(false);
     const [aiKingChecked, setAiKingChecked] = useState(false);
+
+    // Pawn Promotion
+    const [pawnForPromotion, setPawnForPromotion] = useState<Piece | null>(null);
 
     const [winner, setWinner] = useState<Player | null>(null);
 
@@ -111,6 +117,11 @@ export function ChessContextProvider( { children }: ChessContextProviderProps ) 
 
             if (changedPiece) {
                 changedPiece.position = newPosition
+
+                // Pawn Promotion
+                if (changedPiece.type === 'pawn' && Number(newPosition[1]) === 8) {
+                    setPawnForPromotion(changedPiece);
+                }
             }
 
             prevUser.turn = false;
@@ -261,8 +272,81 @@ export function ChessContextProvider( { children }: ChessContextProviderProps ) 
 
     }
 
+    // Promotes pawn to new piece
+    const promotePawn = (pawn: Piece, nextType: 'queen' | 'rook' | 'bishop' | 'knight') => {
+
+        const indexOfPawn = user.pieces.findIndex(p => p.id === pawn.id);
+
+        // Promote to Queen
+        if (nextType === 'queen') {
+
+            // User
+            if (pawn.owner === 'user') {
+                setUser((prevUser) => {
+                    prevUser.pieces[indexOfPawn] = Queen('user', pawn.position);
+                    return prevUser;
+                })
+            }
+            // Ai
+            else {
+                return;
+            }
+
+        }
+        // Promote to Rook
+        else if (nextType === 'rook') {
+
+            // User
+            if (pawn.owner === 'user') {
+                setUser((prevUser) => {
+                    prevUser.pieces[indexOfPawn] = Rook('user', pawn.position);
+                    return prevUser;
+                })
+            }
+            // Ai
+            else {
+                return;
+            }
+    
+        }
+        // Promote to Bishop
+        else if (nextType === 'bishop') {
+
+            // User
+            if (pawn.owner === 'user') {
+                setUser((prevUser) => {
+                    prevUser.pieces[indexOfPawn] = Bishop('user', pawn.position);
+                    return prevUser;
+                })
+            }
+            // Ai
+            else {
+                return;
+            }
+    
+        }
+        // Promote to Knight
+        else if (nextType === 'knight') {
+
+            // User
+            if (pawn.owner === 'user') {
+                setUser((prevUser) => {
+                    prevUser.pieces[indexOfPawn] = Knight('user', pawn.position);
+                    return prevUser;
+                })
+            }
+            // Ai
+            else {
+                return;
+            }
+        }
+
+        setPawnForPromotion(null);
+
+    }
+
     return (
-        <chessContext.Provider value={{user, ai, selectedChessPiece, aiKingChecked, userKingChecked, winner, selectPiece, moveChessPiece, moveAiPiece, declareWinner, restartGame}} >
+        <chessContext.Provider value={{user, ai, selectedChessPiece, aiKingChecked, userKingChecked, pawnForPromotion ,winner, selectPiece, moveChessPiece, moveAiPiece, declareWinner, restartGame, promotePawn}} >
             {children}
         </chessContext.Provider>
     )

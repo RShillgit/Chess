@@ -17,7 +17,7 @@ type boardBox = {
 
 const ChessBoard = () => {
 
-    const { user, ai, selectPiece, selectedChessPiece, aiKingChecked, userKingChecked, winner, moveChessPiece, moveAiPiece, declareWinner } = useChessContext();
+    const { user, ai, selectPiece, selectedChessPiece, aiKingChecked, pawnForPromotion, userKingChecked, winner, moveChessPiece, moveAiPiece, declareWinner } = useChessContext();
 
     const [board, setBoard] = useState<boardBox[]>([]);
 
@@ -64,7 +64,7 @@ const ChessBoard = () => {
     // On AI turn change impliment movement
     useEffect(() => {
 
-        if (ai.turn && !winner) {
+        if (ai.turn && !winner && !pawnForPromotion) {
 
             // Checked king
             if (aiKingChecked) {
@@ -98,7 +98,7 @@ const ChessBoard = () => {
 
         }
 
-    }, [ai])
+    }, [ai, user, pawnForPromotion])
 
     // On checked king change check for check mate
     useEffect(() => {
