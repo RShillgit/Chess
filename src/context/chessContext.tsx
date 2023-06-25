@@ -201,6 +201,7 @@ export function ChessContextProvider( { children }: ChessContextProviderProps ) 
 
         // AI's king
         const aiKing = ai.pieces.find(piece => piece.alive && piece.type === 'king');
+        console.log(aiKing)
 
         // User's king
         const userKing = user.pieces.find(piece => piece.alive && piece.type === 'king');

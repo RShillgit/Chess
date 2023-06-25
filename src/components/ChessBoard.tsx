@@ -171,6 +171,7 @@ const ChessBoard = () => {
         if (aiPieceExists) {
 
             if(aiPieceExists.alive) {
+                console.log(aiKingChecked)
                 return (
                     <div>
                         <img className={aiPieceExists.type === 'king' && aiKingChecked 
@@ -225,12 +226,20 @@ const ChessBoard = () => {
         }
     }
 
+    // TODO: Max call stack errors when pieces are low
     // Randomly moves AI pieces
-    function randomlyMovePiece(): void {
+    function randomlyMovePiece(previousPiece?: Piece): void {
 
         const aliveAiPieces = ai.pieces.filter(p => p.alive);
-        const randomPiece = aliveAiPieces[Math.floor(Math.random() * aliveAiPieces.length)];
+        let randomPiece = aliveAiPieces[Math.floor(Math.random() * aliveAiPieces.length)];
         const enemyking = user.pieces.find(p => p.type === 'king');
+
+        // Make sure random piece is unique
+        if (previousPiece) {
+            while (aliveAiPieces.length > 1 && randomPiece === previousPiece) {
+                randomPiece = aliveAiPieces[Math.floor(Math.random() * aliveAiPieces.length)];
+            }
+        }
 
         // Try to move toward enemy king
         if (enemyking) {
@@ -239,11 +248,11 @@ const ChessBoard = () => {
 
                 // Random piece is above enemy king
                 if (Number(randomPiece.position[1]) > Number(enemyking.position[1])) {
-                    return Number(randomPiece.position[1]) > Number(box.position[1]) && Number(box.position[1]) >= Number(enemyking.position[1]);
+                    return Number(randomPiece.position[1]) >= Number(box.position[1]) && Number(box.position[1]) >= Number(enemyking.position[1]);
                 }
                 // Random piece is below enemy king
                 else if (Number(randomPiece.position[1]) < Number(enemyking.position[1])) {
-                    return Number(enemyking.position[1]) > Number(box.position[1]) && Number(box.position[1]) >= Number(randomPiece.position[1]);
+                    return Number(enemyking.position[1]) >= Number(box.position[1]) && Number(box.position[1]) >= Number(randomPiece.position[1]);
                 }
                 // Random piece is on the same row as the enemy king
                 else {
@@ -260,13 +269,15 @@ const ChessBoard = () => {
                 }
             })
             
-            for (let i = 0; i < closerBoxes.length; i++) {
+            // Loop through the boxes in reverse order to try and move closest to the king first
+            for (let i = closerBoxes.length - 1; i >= 0; i--) {
 
                 if(randomPiece.canMove(closerBoxes[i].position, user.pieces, ai.pieces) && !kingWillBeChecked(randomPiece, closerBoxes[i].position, ai, user)) {
                     return moveAiPiece(randomPiece, closerBoxes[i].position);
                 }
             }
-            return randomlyMovePiece();
+
+            return randomlyMovePiece(randomPiece);
         }
     }
 

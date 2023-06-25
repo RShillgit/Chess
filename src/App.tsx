@@ -20,7 +20,6 @@ const App = () => {
   useEffect(() => {
     console.log(user)
     console.log(ai)
-    console.log(pawnForPromotion)
   }, [])
 
   // Modals
