@@ -1,6 +1,7 @@
 import React, { FC, ReactNode, useEffect, useState } from "react"
 import { useChessContext } from "../context/chessContext";
 import { Piece, Player } from "../types/chessTypes";
+import { determineCorrectImg } from "../utils/helperFunctions";
 
 import pawnImg from '../assets/pawn.png';
 import rookImg from '../assets/rook.png';
@@ -267,16 +268,6 @@ const ChessBoard = () => {
             }
             return randomlyMovePiece();
         }
-    }
-
-    // Determines correct image for chess pieces
-    const determineCorrectImg = (piece: Piece) => {
-        if (piece.type === 'pawn') return pawnImg;
-        else if (piece.type === 'rook') return rookImg;
-        else if (piece.type === 'knight') return knightImg;
-        else if (piece.type === 'bishop') return bishopImg;
-        else if (piece.type === 'queen') return queenImg;
-        else if (piece.type === 'king') return kingImg;
     }
 
     const moveCheckedKing = () => {

@@ -1,5 +1,11 @@
 import { type Piece, type Player } from "../types/chessTypes";
 import { Bishop, King, Knight, Pawn, Queen, Rook } from "./pieces";
+import pawnImg from '../assets/pawn.png';
+import rookImg from '../assets/rook.png';
+import knightImg from '../assets/knight.png';
+import bishopImg from '../assets/bishop.png';
+import queenImg from '../assets/queen.png';
+import kingImg from '../assets/king.png';
 
 export function createUser(player: 'user' | 'ai'): Player {
 
@@ -81,4 +87,14 @@ export function generateInitialPieces(player: 'user' | 'ai'): Piece[] {
     ];
 
     return initialPieces;
+}
+
+    // Determines correct image for chess pieces
+export function determineCorrectImg(piece: Piece) {
+    if (piece.type === 'pawn') return pawnImg;
+    else if (piece.type === 'rook') return rookImg;
+    else if (piece.type === 'knight') return knightImg;
+    else if (piece.type === 'bishop') return bishopImg;
+    else if (piece.type === 'queen') return queenImg;
+    else if (piece.type === 'king') return kingImg;
 }

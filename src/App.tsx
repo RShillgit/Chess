@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { type Piece, type Player } from "./types/chessTypes";
 import ChessBoard from "./components/ChessBoard";
 import { useChessContext } from "./context/chessContext";
+import { determineCorrectImg } from "./utils/helperFunctions";
 
 import queenImg from './assets/queen.png';
 import rookImg from './assets/rook.png';
@@ -65,10 +66,10 @@ const App = () => {
           {user.pieces.map(piece => {
             if (!piece.alive) {
               return (
-                <div key={piece.id} className="flex justify-center items-center bg-white w-10 h-10 border-4 border-white 
-                  rounded-full text-black text-xs"
+                <div key={piece.id} className="flex justify-center items-center w-14 h-14 
+                  white-piece"
                 >
-                  {piece.type}
+                  <img src={determineCorrectImg(piece)} alt=""/>
                 </div>
               )
             } 
@@ -84,10 +85,10 @@ const App = () => {
           {ai.pieces.map(piece => {
             if (!piece.alive) {
               return (
-                <div key={piece.id} className="flex justify-center items-center bg-black w-10 h-10 border-4 border-black 
-                  rounded-full text-white text-xs"
+                <div key={piece.id} className="flex justify-center items-center w-14 h-14  
+                 "
                 >
-                  {piece.type}
+                  <img src={determineCorrectImg(piece)} alt=""/>
                 </div>
               )
             } 
@@ -112,7 +113,7 @@ const App = () => {
   }
 
   return (
-    <div className="bg-neutral-800 min-h-screen">
+    <div className="bg-neutral-700 min-h-screen">
       <h1 className="flex pt-4 font-bold text-white justify-center text-3xl translate-y-">Chess</h1>
 
       <div className="flex justify-center p-4">
