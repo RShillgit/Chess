@@ -226,7 +226,6 @@ const ChessBoard = () => {
         }
     }
 
-    // TODO: Max call stack errors when pieces are low
     // Randomly moves AI pieces
     function randomlyMovePiece(previousPiece?: Piece): void {
 
