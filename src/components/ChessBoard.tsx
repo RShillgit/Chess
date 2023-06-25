@@ -99,7 +99,7 @@ const ChessBoard = () => {
 
         }
 
-    }, [ai, user, pawnForPromotion])
+    }, [ai, user, pawnForPromotion, winner])
 
     // On checked king change check for check mate
     useEffect(() => {
@@ -171,7 +171,7 @@ const ChessBoard = () => {
         if (aiPieceExists) {
 
             if(aiPieceExists.alive) {
-                console.log(aiKingChecked)
+                //console.log(aiKingChecked)
                 return (
                     <div>
                         <img className={aiPieceExists.type === 'king' && aiKingChecked 
@@ -230,6 +230,10 @@ const ChessBoard = () => {
     function randomlyMovePiece(previousPiece?: Piece): void {
 
         const aliveAiPieces = ai.pieces.filter(p => p.alive);
+
+        // If theres only 1 ai piece return
+        if (aliveAiPieces.length === 1) return;
+
         let randomPiece = aliveAiPieces[Math.floor(Math.random() * aliveAiPieces.length)];
         const enemyking = user.pieces.find(p => p.type === 'king');
 

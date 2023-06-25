@@ -17,11 +17,6 @@ const App = () => {
     ""
   ];
 
-  useEffect(() => {
-    console.log(user)
-    console.log(ai)
-  }, [])
-
   // Modals
   useEffect(() => {
 

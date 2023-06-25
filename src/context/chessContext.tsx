@@ -53,17 +53,20 @@ export function ChessContextProvider( { children }: ChessContextProviderProps ) 
         opponentKingIsChecked();
 
         const storedWinner = localStorage.getItem('winner');
-        if (storedWinner && JSON.parse(storedWinner) === 'user') setWinner(user);
-        else if (storedWinner && JSON.parse(storedWinner) === 'ai') setWinner(ai);
+        if (storedWinner && storedWinner === 'user') setWinner(user);
+        else if (storedWinner && storedWinner === 'ai') setWinner(ai);
 
     }, [])
 
-    // Check for a stale mate
+    // Check for a stale mate/winner
     useEffect(() => {
 
         if (ai.pieces.filter(p => p.alive).length === 1 && user.pieces.filter(p => p.alive).length === 1) {
             setStaleMate(true);
         }
+
+        else if (ai.pieces.filter(p => p.alive).length === 1) declareWinner(user);
+        else if (user.pieces.filter(p => p.alive).length === 1) declareWinner(ai);
 
     }, [ai, user])
 
@@ -201,7 +204,6 @@ export function ChessContextProvider( { children }: ChessContextProviderProps ) 
 
         // AI's king
         const aiKing = ai.pieces.find(piece => piece.alive && piece.type === 'king');
-        console.log(aiKing)
 
         // User's king
         const userKing = user.pieces.find(piece => piece.alive && piece.type === 'king');
@@ -224,6 +226,7 @@ export function ChessContextProvider( { children }: ChessContextProviderProps ) 
             } 
             // AI's king is not checked
             else {
+
                 setAi(prevAi => {
     
                     aiKing.checked = false;
