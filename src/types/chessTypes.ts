@@ -5,8 +5,9 @@ export type Piece = {
   alive: boolean,
   position: string,
   checked?: boolean,
+  hasMoved? : boolean,
   canMove: (location: string, enemyPieces: Piece[], usersPieces: Piece[]) => boolean,
-  move: (location: string, enemyPieces: Piece[]) => Piece[],
+  move: (location: string, enemyPieces: Piece[], usersPieces: Piece[]) => Piece[],
 }
 
 export type Player = {

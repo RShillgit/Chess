@@ -18,14 +18,14 @@ export function createUser(player: 'user' | 'ai'): Player {
 
         const newPieces: Piece[] = parsedPlayer.pieces.map(piece => {
             if (piece.type === 'pawn') return Pawn(piece.owner, piece.position, piece.alive);
-            else if (piece.type === 'rook') return Rook(piece.owner, piece.position, piece.alive);
+            else if (piece.type === 'rook') return Rook(piece.owner, piece.position, piece.alive, piece.hasMoved);
             else if (piece.type === 'knight') return Knight(piece.owner, piece.position, piece.alive);
             else if (piece.type === 'bishop') return Bishop(piece.owner, piece.position, piece.alive);
             else if (piece.type === 'queen') return Queen(piece.owner, piece.position, piece.alive);
             else if (piece.type === 'king') {
                 if (piece.checked) {
-                    return King(piece.owner, piece.position, piece.checked, piece.alive);
-                } else return King(piece.owner, piece.position, false, piece.alive);
+                    return King(piece.owner, piece.position, piece.checked, piece.alive, piece.hasMoved);
+                } else return King(piece.owner, piece.position, false, piece.alive, piece.hasMoved);
             }
             else return piece;
         })

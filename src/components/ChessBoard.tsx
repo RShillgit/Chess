@@ -67,35 +67,40 @@ const ChessBoard = () => {
 
         if (ai.turn && !winner && !pawnForPromotion) {
 
-            // Checked king
-            if (aiKingChecked) {
-                moveCheckedKing();
-                return;
-            }
+            setTimeout(() => {
 
-            const king = ai.pieces.find(p => p.type === 'king');
+                const king = ai.pieces.find(p => p.type === 'king');
 
-            if (king) {
-                // See if any of the AI pieces can eleminate a user piece
-                for (let i = 0; i < ai.pieces.length; i++) {
-                    for (let j = 0; j < user.pieces.length; j++) {
+                if (king) {
 
-                        if (ai.pieces[i].alive && user.pieces[j].alive) {
+                    // Checked king
+                    if (aiKingChecked || king.checked) {
+                        moveCheckedKing();
+                        return;
+                    }
 
-                            if (ai.pieces[i].canMove(user.pieces[j].position, user.pieces, ai.pieces)) {
-                                if (!kingWillBeChecked(ai.pieces[i], user.pieces[j].position, ai, user)) {
-                                    moveAiPiece(ai.pieces[i], user.pieces[j].position);
-                                    return;
+                    // See if any of the AI pieces can eleminate a user piece
+                    for (let i = 0; i < ai.pieces.length; i++) {
+                        for (let j = 0; j < user.pieces.length; j++) {
+
+                            if (ai.pieces[i].alive && user.pieces[j].alive) {
+
+                                if (ai.pieces[i].canMove(user.pieces[j].position, user.pieces, ai.pieces)) {
+                                    if (!kingWillBeChecked(ai.pieces[i], user.pieces[j].position, ai, user)) {
+                                        moveAiPiece(ai.pieces[i], user.pieces[j].position);
+                                        return;
+                                    }
                                 }
                             }
                         }
                     }
                 }
-            }
 
-            // If not, select a random piece and move it to a random location
-            randomlyMovePiece();
-            return;
+                // If not, select a random piece and move it to a random location
+                randomlyMovePiece();
+                return;
+
+            }, 800)
 
         }
 
@@ -122,11 +127,11 @@ const ChessBoard = () => {
                 ]
     
                 for (let i = 0; i < allPossibleMoves.length; i++) {
-    
+                    
                     if (userKingChecked) {
     
                         // User not check mate 
-                        if (king.canMove(allPossibleMoves[i], user.pieces, ai.pieces) && !kingWillBeChecked(king, allPossibleMoves[i], user, ai)) {
+                        if (king.canMove(allPossibleMoves[i], ai.pieces, user.pieces) && !kingWillBeChecked(king, allPossibleMoves[i], user, ai)) {
                             return;
                         }
       
@@ -153,7 +158,7 @@ const ChessBoard = () => {
                 return (
                     <>
                         
-                        <div 
+                        <div className="piece"
                             id={`piece-${userPieceExists.position}`}
                             onClick={() => user.turn && !winner ? selectPiece(userPieceExists) : undefined }
                         >
@@ -172,7 +177,7 @@ const ChessBoard = () => {
 
             if(aiPieceExists.alive) {
                 return (
-                    <div>
+                    <div className="piece">
                         <img className={aiPieceExists.type === 'king' && aiPieceExists.checked 
                                 ? 'checked-piece' 
                                 : ''
@@ -220,7 +225,7 @@ const ChessBoard = () => {
 
         if (selectedChessPiece) {
             if(checkViableMove(e)) {
-                moveChessPiece(e.currentTarget.id, ai);
+                moveChessPiece(e.currentTarget.id, ai, user);
             }
         }
     }

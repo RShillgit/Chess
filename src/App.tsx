@@ -16,7 +16,7 @@ const App = () => {
   useEffect(() => {
     //console.log("user", user)
     //console.log("ai", ai)
-  }, [user, ai])
+  }, [ai, user])
 
   // Modals
   useEffect(() => {

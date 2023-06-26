@@ -160,7 +160,7 @@ export function Pawn(player: 'user' | 'ai', position: string, alive?: boolean): 
         },
 
         // Moves piece to the location
-        move: (location: string, enemyPieces: Piece[]) => {
+        move: (location: string, enemyPieces: Piece[], usersPieces?: Piece[]) => {
 
             // If there is an enemy at this location, eliminate them
             const enemy = enemyPieces.find(piece => piece.alive && piece.position === location)
@@ -176,15 +176,14 @@ export function Pawn(player: 'user' | 'ai', position: string, alive?: boolean): 
 }
 
 // Rook
-export function Rook(player: 'user' | 'ai', position: string, alive?: boolean): Piece {
-
-    // TODO: Castle
+export function Rook(player: 'user' | 'ai', position: string, alive?: boolean, hasMoved?: boolean): Piece {
 
     return {
         id: uuidv4(),
         type: 'rook',
         owner: player,
         alive: (alive !== undefined ? alive : true),
+        hasMoved: (hasMoved !== undefined ? hasMoved : false),
         position: position,
 
         // Checks if piece can move to the location
@@ -217,7 +216,7 @@ export function Rook(player: 'user' | 'ai', position: string, alive?: boolean): 
         },
 
         // Moves piece to the location
-        move: (location: string, enemyPieces: Piece[]) => {
+        move: (location: string, enemyPieces: Piece[], usersPieces?: Piece[]) => {
 
             // If there is an alive enemy at this location, eliminate them
             const enemy = enemyPieces.find(piece => piece.alive && piece.position === location);
@@ -225,6 +224,7 @@ export function Rook(player: 'user' | 'ai', position: string, alive?: boolean): 
             if (enemy) enemy.alive = false;
 
             position = location;
+            hasMoved = true;
 
             return enemyPieces;
         }
@@ -270,7 +270,7 @@ export  function Knight(player: 'user' | 'ai', position: string, alive?: boolean
         },
 
         // Moves piece to the location
-        move: (location: string, enemyPieces: Piece[]) => {
+        move: (location: string, enemyPieces: Piece[], usersPieces?: Piece[]) => {
 
             // If there is an alive enemy at this location, eliminate them
             const enemy = enemyPieces.find(piece => piece.alive && piece.position === location)
@@ -312,7 +312,7 @@ export function Bishop(player: 'user' | 'ai', position: string, alive?: boolean)
         },
 
         // Moves piece to the location
-        move: (location: string, enemyPieces: Piece[]) => {
+        move: (location: string, enemyPieces: Piece[], usersPieces?: Piece[]) => {
 
             // If there is an alive enemy at this location, eliminate them
             const enemy = enemyPieces.find(piece => piece.alive && piece.position === location)
@@ -371,7 +371,7 @@ export function Queen(player: 'user' | 'ai', position: string, alive?: boolean):
         },
 
         // Moves piece to the location
-        move: (location: string, enemyPieces: Piece[]) => {
+        move: (location: string, enemyPieces: Piece[], usersPieces?: Piece[]) => {
 
             // If there is an alive enemy at this location, eliminate them
             const enemy = enemyPieces.find(piece => piece.alive && piece.position === location)
@@ -387,13 +387,14 @@ export function Queen(player: 'user' | 'ai', position: string, alive?: boolean):
 }
 
 // King
-export function King(player: 'user' | 'ai', position: string, checked: boolean, alive?: boolean): Piece {
+export function King(player: 'user' | 'ai', position: string, checked: boolean, alive?: boolean, hasMoved?: boolean): Piece {
     return {
         id: uuidv4(),
         type: 'king',
         owner: player,
         alive: (alive !== undefined ? alive : true),
         checked: (checked !== undefined ? checked : false),
+        hasMoved: (hasMoved !== undefined ? hasMoved : false),
         position: position,
 
         // Checks if piece can move to the location
@@ -430,7 +431,7 @@ export function King(player: 'user' | 'ai', position: string, checked: boolean, 
             else if (location[0] === position[0]) {
 
                 // 1 row higher/lower
-                if (Number(position[1]) + 1 === Number(location[1]) || Number(position[1]) - 1 === Number(location[1])) return true
+                if (Number(position[1]) + 1 === Number(location[1]) || Number(position[1]) - 1 === Number(location[1])) return true;
                 return false;
 
             } 
@@ -439,8 +440,17 @@ export function King(player: 'user' | 'ai', position: string, checked: boolean, 
 
                 // 1 row left/right
                 if ((location[0].charCodeAt(0) - 1) === position[0].charCodeAt(0) || (location[0].charCodeAt(0) + 1) === position[0].charCodeAt(0)) return true;
-        
+                
+                // Castling
+                if (!hasMoved) {
+                    if (location[0].charCodeAt(0) === (position[0].charCodeAt(0) + 2) || location[0].charCodeAt(0) === (position[0].charCodeAt(0) - 2)) {
+                        if (castleAvailable(position, location,enemyPieces, usersPieces)) return true;
+                        else return false;
+                    }
+                }
+                
                 return false;
+
             }
 
             // Diagonal
@@ -460,14 +470,36 @@ export function King(player: 'user' | 'ai', position: string, checked: boolean, 
         },
 
         // Moves piece to the location
-        move: (location: string, enemyPieces: Piece[]) => {
+        move: (location: string, enemyPieces: Piece[], usersPieces?: Piece[]) => {
 
             // If there is an alive enemy at this location, eliminate them
             const enemy = enemyPieces.find(piece => piece.alive && piece.position === location)
 
             if (enemy) enemy.alive = false;
 
+            // If it was a castle, move the proper rook
+            if (position && usersPieces) {
+                // Left Castle
+                if (location[0].charCodeAt(0) === (position[0].charCodeAt(0) - 2)) {
+                    const rookToTheLeft = usersPieces.find(p => p.alive && p.type === 'rook' && !p.hasMoved && p.position[0].charCodeAt(0) < position[0].charCodeAt(0));
+                    if (rookToTheLeft) {
+                        rookToTheLeft.position = `${String.fromCharCode(location[0].charCodeAt(0) + 1)}${rookToTheLeft.position[1]}`;
+                        rookToTheLeft.hasMoved = true;
+                    }
+                }
+                // Right Castle
+                else if (location[0].charCodeAt(0) === (position[0].charCodeAt(0) + 2)) {
+                    const rookToTheRight = usersPieces.find(p => p.alive && p.type === 'rook' && !p.hasMoved && p.position[0].charCodeAt(0) > position[0].charCodeAt(0));
+                    if (rookToTheRight) {
+                        rookToTheRight.position = `${String.fromCharCode(location[0].charCodeAt(0) - 1)}${rookToTheRight.position[1]}`;
+                        rookToTheRight.hasMoved = true;
+                    }
+                }
+            }
+
             position = location;
+            hasMoved = true;
+
             return enemyPieces;
         }
 
@@ -544,4 +576,25 @@ function pieceInPath (path: 'column' | 'row' | 'diagonal', position: string, loc
 
     if (pieceInbetween) return true;
     return false;
+}
+
+// Checks if the king & rook can be castled
+function castleAvailable(position: string, location: string, enemyPieces: Piece[], usersPieces: Piece[]) {
+
+    let rook: Piece | undefined = undefined;
+
+    // Determine what rook would be used for the castle
+    if (location[0].charCodeAt(0) === (position[0].charCodeAt(0) + 2)) {
+        const rookToTheRight = usersPieces.find(p => p.alive && p.type === 'rook' && !p.hasMoved && p.position[0].charCodeAt(0) > position[0].charCodeAt(0));
+        if (rookToTheRight) rook = rookToTheRight;
+    }
+    else if (location[0].charCodeAt(0) === (position[0].charCodeAt(0) - 2)) {
+        const rookToTheLeft = usersPieces.find(p => p.alive && p.type === 'rook' && !p.hasMoved && p.position[0].charCodeAt(0) < position[0].charCodeAt(0));
+        if (rookToTheLeft) rook = rookToTheLeft;
+    }
+
+    // Determine if there are pieces inbetween
+    if (rook && !pieceInPath("row", position, location, enemyPieces, usersPieces )) return true;
+    else return false;
+
 }

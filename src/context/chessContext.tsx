@@ -17,7 +17,7 @@ type ChessContext = {
     winner: (Player | null),
     staleMate: boolean,
     selectPiece: (piece: Piece | null) => void,
-    moveChessPiece: (newPosition: string, enemy: Player) => void,
+    moveChessPiece: (newPosition: string, enemy: Player, user: Player) => void,
     moveAiPiece: (piece: Piece, destination: string) => void,
     declareWinner: (player: Player) => void,
     restartGame: () => void,
@@ -111,10 +111,10 @@ export function ChessContextProvider( { children }: ChessContextProviderProps ) 
     }
 
     // Moves User chess piece
-    const moveChessPiece = (newPosition: string, enemy: Player) => {
+    const moveChessPiece = (newPosition: string, enemy: Player, user: Player) => {
 
         // Move selected piece
-        const updatedEnemyPieces = selectedChessPiece?.move(newPosition, enemy.pieces);
+        const updatedEnemyPieces = selectedChessPiece?.move(newPosition, enemy.pieces, user.pieces);
 
         // Update enemies pieces array and local storage
         if (updatedEnemyPieces && enemy.name === 'ai') {
@@ -138,11 +138,21 @@ export function ChessContextProvider( { children }: ChessContextProviderProps ) 
             const changedPiece = prevUser.pieces.find(piece => piece === selectedChessPiece)
 
             if (changedPiece) {
+
                 changedPiece.position = newPosition
 
                 // Pawn Promotion
                 if (changedPiece.type === 'pawn' && Number(newPosition[1]) === 8) {
                     setPawnForPromotion(changedPiece);
+                }
+
+                // King 
+                if (changedPiece.type === 'king' && changedPiece.hasMoved === false) {
+                    changedPiece.hasMoved = true;
+                }
+                // Rook moved
+                if (changedPiece.type === 'rook' && changedPiece.hasMoved === false) {
+                    changedPiece.hasMoved = true;
                 }
             }
 
@@ -161,7 +171,7 @@ export function ChessContextProvider( { children }: ChessContextProviderProps ) 
     const moveAiPiece = async (piece: Piece, destination: string) => {
 
         // Move the piece
-        const updatedEnemyPieces = piece.move(destination, user.pieces);
+        const updatedEnemyPieces = piece.move(destination, user.pieces, ai.pieces);
 
         // Update the user
         setUser(prevUser => {
@@ -170,13 +180,6 @@ export function ChessContextProvider( { children }: ChessContextProviderProps ) 
                 ...prevUser,
                 pieces: updatedEnemyPieces,
                 turn: true
-            }
-
-            // Pawn Promotion
-            if (piece.type === 'pawn' && Number(destination[1]) === 1) {
-                const typeOptions = ['queen', 'rook', 'bishop', 'knight'];
-                const randomType = typeOptions[Math.floor(Math.random() * typeOptions.length)];
-                promotePawn(piece, randomType);
             }
 
             localStorage.setItem('user', JSON.stringify(newUser));
@@ -191,8 +194,24 @@ export function ChessContextProvider( { children }: ChessContextProviderProps ) 
             const changedPiece = prevAi.pieces.find(p => p === piece);
 
             if (changedPiece) {
-                console.log("changed piece should occur first", changedPiece)
                 changedPiece.position = destination
+
+                // Pawn Promotion
+                if (piece.type === 'pawn' && Number(destination[1]) === 1) {
+                    const typeOptions = ['queen', 'rook', 'bishop', 'knight'];
+                    const randomType = typeOptions[Math.floor(Math.random() * typeOptions.length)];
+                    promotePawn(piece, randomType);
+                }
+
+                // King moved
+                if (changedPiece.type === 'king' && changedPiece.hasMoved === false) {
+                    changedPiece.hasMoved = true;
+                }
+
+                // Rook moved
+                if (changedPiece.type === 'rook' && changedPiece.hasMoved === false) {
+                    changedPiece.hasMoved = true;
+                }
             }
 
             prevAi.turn = false;
@@ -214,12 +233,6 @@ export function ChessContextProvider( { children }: ChessContextProviderProps ) 
         const userKing = user.pieces.find(piece => piece.alive && piece.type === 'king');
 
         if (aiKing) {
-            
-            user.pieces.filter(piece => piece.alive).some(piece => {
-                if (piece.alive && piece.canMove(aiKing.position, ai.pieces, user.pieces)) {
-                    console.log("piece", piece, "can move to", aiKing.position)
-                }
-            })
 
             // AI's king is checked
             if (user.pieces.filter(piece => piece.alive).some(piece => piece.alive && piece.canMove(aiKing.position, ai.pieces, user.pieces))) {
