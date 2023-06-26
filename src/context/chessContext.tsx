@@ -58,15 +58,22 @@ export function ChessContextProvider( { children }: ChessContextProviderProps ) 
 
     }, [])
 
-    // Check for a stale mate/winner
+    // Check for a stale mate/winner or checked king
     useEffect(() => {
 
+        // Stale Mate
         if (ai.pieces.filter(p => p.alive).length === 1 && user.pieces.filter(p => p.alive).length === 1) {
             setStaleMate(true);
         }
 
+        // Winners
         else if (ai.pieces.filter(p => p.alive).length === 1) declareWinner(user);
         else if (user.pieces.filter(p => p.alive).length === 1) declareWinner(ai);
+
+        // Check for checked king
+        else {
+            opponentKingIsChecked();
+        }
 
     }, [ai, user])
 
@@ -103,6 +110,7 @@ export function ChessContextProvider( { children }: ChessContextProviderProps ) 
         }
     }
 
+    // Moves User chess piece
     const moveChessPiece = (newPosition: string, enemy: Player) => {
 
         // Move selected piece
@@ -147,12 +155,10 @@ export function ChessContextProvider( { children }: ChessContextProviderProps ) 
         })
 
         setSelectedChessPiece(null);
-
-        opponentKingIsChecked();
     }
 
     // Moves AI chess piece
-    const moveAiPiece = (piece: Piece, destination: string) => {
+    const moveAiPiece = async (piece: Piece, destination: string) => {
 
         // Move the piece
         const updatedEnemyPieces = piece.move(destination, user.pieces);
@@ -185,6 +191,7 @@ export function ChessContextProvider( { children }: ChessContextProviderProps ) 
             const changedPiece = prevAi.pieces.find(p => p === piece);
 
             if (changedPiece) {
+                console.log("changed piece should occur first", changedPiece)
                 changedPiece.position = destination
             }
 
@@ -195,8 +202,6 @@ export function ChessContextProvider( { children }: ChessContextProviderProps ) 
             return prevAi;
 
         })
-
-        opponentKingIsChecked();
     }
 
     // Checks if the opponents king is checked
@@ -209,6 +214,12 @@ export function ChessContextProvider( { children }: ChessContextProviderProps ) 
         const userKing = user.pieces.find(piece => piece.alive && piece.type === 'king');
 
         if (aiKing) {
+            
+            user.pieces.filter(piece => piece.alive).some(piece => {
+                if (piece.alive && piece.canMove(aiKing.position, ai.pieces, user.pieces)) {
+                    console.log("piece", piece, "can move to", aiKing.position)
+                }
+            })
 
             // AI's king is checked
             if (user.pieces.filter(piece => piece.alive).some(piece => piece.alive && piece.canMove(aiKing.position, ai.pieces, user.pieces))) {
@@ -216,10 +227,11 @@ export function ChessContextProvider( { children }: ChessContextProviderProps ) 
                 setAiKingChecked(true);
     
                 setAi(prevAi => {
-    
+                    
                     aiKing.checked = true;
     
                     localStorage.setItem('ai', JSON.stringify(prevAi));
+                    //console.log("checked", prevAi.pieces)
                     return prevAi;
     
                 })
@@ -232,6 +244,7 @@ export function ChessContextProvider( { children }: ChessContextProviderProps ) 
                     aiKing.checked = false;
     
                     localStorage.setItem('ai', JSON.stringify(prevAi));
+                    //console.log("not checked", prevAi.pieces)
                     return prevAi;
     
                 })

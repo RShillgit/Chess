@@ -13,9 +13,10 @@ const App = () => {
 
   const { user, ai, selectedChessPiece, pawnForPromotion, selectPiece, declareWinner, winner, staleMate, restartGame, promotePawn } = useChessContext();
 
-  const graveyardStyles = [
-    ""
-  ];
+  useEffect(() => {
+    //console.log("user", user)
+    //console.log("ai", ai)
+  }, [user, ai])
 
   // Modals
   useEffect(() => {
@@ -23,19 +24,28 @@ const App = () => {
     // Stale Mate modal
     if (staleMate) {
       const staleMateModal = document.getElementById('stale-mate-modal') as HTMLDialogElement;
-      if (staleMateModal) staleMateModal.showModal();
+      if (staleMateModal) {
+        staleMateModal.close();
+        staleMateModal.showModal();
+      }
     }
 
     // Winner modal
     if (winner) {
       const dialog = document.getElementById('winner-modal') as HTMLDialogElement;
-      if (dialog) dialog.showModal();
+      if (dialog) {
+        dialog.close();
+        dialog.showModal();
+      }
     }
 
     // Promotion modal
     else if (pawnForPromotion) {
       const pawnModal = document.getElementById('promotion-modal') as HTMLDialogElement;
-      if (pawnModal) pawnModal.showModal();
+      if (pawnModal) {
+        pawnModal.close();
+        pawnModal.showModal();
+      }
     }
 
   }, [winner, pawnForPromotion, staleMate])

@@ -171,10 +171,9 @@ const ChessBoard = () => {
         if (aiPieceExists) {
 
             if(aiPieceExists.alive) {
-                //console.log(aiKingChecked)
                 return (
                     <div>
-                        <img className={aiPieceExists.type === 'king' && aiKingChecked 
+                        <img className={aiPieceExists.type === 'king' && aiPieceExists.checked 
                                 ? 'checked-piece' 
                                 : ''
                             } 
