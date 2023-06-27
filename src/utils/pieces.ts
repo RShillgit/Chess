@@ -398,7 +398,7 @@ export function King(player: 'user' | 'ai', position: string, checked: boolean, 
         position: position,
 
         // Checks if piece can move to the location
-        canMove: (location: string, enemyPieces: Piece[], usersPieces: Piece[]) => {
+        canMove: (location: string, enemyPieces: Piece[], usersPieces: Piece[], iteration?: number) => {
 
             if (position === location) return false;
 
@@ -423,9 +423,12 @@ export function King(player: 'user' | 'ai', position: string, checked: boolean, 
                 }
                 return piece;
             })
-
+            
             // If it will be checked at the location return false 
-            if (aliveEnemyPieces.some(piece => piece.canMove(location, usersPiecesInludingThisMove, enemyPieces))) return false;
+            if (iteration && iteration === 1) {
+                if (aliveEnemyPieces.some(piece => piece.canMove(location, usersPiecesInludingThisMove, enemyPieces, 2))) return false;
+                return true;
+            }
             
             // Column
             else if (location[0] === position[0]) {

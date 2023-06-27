@@ -127,11 +127,12 @@ const ChessBoard = () => {
                 ]
     
                 for (let i = 0; i < allPossibleMoves.length; i++) {
+                    console.log(king.canMove(allPossibleMoves[i], ai.pieces, user.pieces, 1))
                     
                     if (userKingChecked) {
     
                         // User not check mate 
-                        if (king.canMove(allPossibleMoves[i], ai.pieces, user.pieces) && !kingWillBeChecked(king, allPossibleMoves[i], user, ai)) {
+                        if (king.canMove(allPossibleMoves[i], ai.pieces, user.pieces, 1) && !kingWillBeChecked(king, allPossibleMoves[i], user, ai)) {
                             return;
                         }
       
@@ -248,8 +249,37 @@ const ChessBoard = () => {
             }
         }
 
-        // Try to move toward enemy king
-        if (enemyking) {
+        // If the randomPiece is a king, move it to a random spot
+        if (randomPiece.type === 'king') {
+
+            const allPossibleMoves = [
+                `${String.fromCharCode(randomPiece.position[0].charCodeAt(0) - 1)}${Number(randomPiece.position[1]) + 1}`, // Left 1, Up 1
+                `${randomPiece.position[0]}${Number(randomPiece.position[1]) + 1}`, // Up 1
+                `${String.fromCharCode(randomPiece.position[0].charCodeAt(0) + 1)}${Number(randomPiece.position[1]) + 1}`, // Right 1, Up 1
+                `${String.fromCharCode(randomPiece.position[0].charCodeAt(0) - 1)}${randomPiece.position[1]}`, // Left 1
+                `${String.fromCharCode(randomPiece.position[0].charCodeAt(0) + 1)}${randomPiece.position[1]}`, // Right 1
+                `${String.fromCharCode(randomPiece.position[0].charCodeAt(0) - 1)}${Number(randomPiece.position[1]) - 1}`, // Left 1, down 1
+                `${randomPiece.position[0]}${Number(randomPiece.position[1]) - 1}`, // Down 1
+                `${String.fromCharCode(randomPiece.position[0].charCodeAt(0) + 1)}${Number(randomPiece.position[1]) - 1}`, // Right 1, down 1
+            ]
+
+            for (let i = 0; i< allPossibleMoves.length; i++) {
+                if(randomPiece.canMove(allPossibleMoves[i], user.pieces, ai.pieces, 1) && !kingWillBeChecked(randomPiece, allPossibleMoves[i], ai, user)) {
+                    return moveAiPiece(randomPiece, allPossibleMoves[i]);
+                }
+            }
+            return randomlyMovePiece(randomPiece);
+        }
+
+        // Else if it is a pawn, move it toward row 1
+        else if (randomPiece.type === 'pawn') {
+            if (randomPiece.canMove(`${randomPiece.position[0]}${Number(randomPiece.position[1]) - 1}`, user.pieces, ai.pieces, 1) && !kingWillBeChecked(randomPiece, `${randomPiece.position[0]}${Number(randomPiece.position[1]) - 1}`, ai, user)) {
+                return moveAiPiece(randomPiece, `${randomPiece.position[0]}${Number(randomPiece.position[1]) - 1}`);
+            }
+        }
+
+        // Else try to move toward enemy king
+        else if (enemyking) {
             // Board boxes that are closer to the enemy king
             const closerBoxes = board.filter(box => {
 
@@ -308,7 +338,7 @@ const ChessBoard = () => {
 
             for (let i = 0; i < allPossibleMoves.length; i++) {
 
-                if (king.canMove(allPossibleMoves[i], user.pieces, ai.pieces) && !kingWillBeChecked(king, allPossibleMoves[i], ai, user)) {
+                if (king.canMove(allPossibleMoves[i], user.pieces, ai.pieces, 1) && !kingWillBeChecked(king, allPossibleMoves[i], ai, user)) {
                     return moveAiPiece(king, allPossibleMoves[i]);
                 }
             }

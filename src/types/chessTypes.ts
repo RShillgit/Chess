@@ -6,7 +6,7 @@ export type Piece = {
   position: string,
   checked?: boolean,
   hasMoved? : boolean,
-  canMove: (location: string, enemyPieces: Piece[], usersPieces: Piece[]) => boolean,
+  canMove: (location: string, enemyPieces: Piece[], usersPieces: Piece[], iteration?: number) => boolean,
   move: (location: string, enemyPieces: Piece[], usersPieces: Piece[]) => Piece[],
 }
 
