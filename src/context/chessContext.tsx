@@ -244,7 +244,7 @@ export function ChessContextProvider( { children }: ChessContextProviderProps ) 
                     aiKing.checked = true;
     
                     localStorage.setItem('ai', JSON.stringify(prevAi));
-                    //console.log("checked", prevAi.pieces)
+
                     return prevAi;
     
                 })
@@ -257,7 +257,7 @@ export function ChessContextProvider( { children }: ChessContextProviderProps ) 
                     aiKing.checked = false;
     
                     localStorage.setItem('ai', JSON.stringify(prevAi));
-                    //console.log("not checked", prevAi.pieces)
+
                     return prevAi;
     
                 })

@@ -127,7 +127,6 @@ const ChessBoard = () => {
                 ]
     
                 for (let i = 0; i < allPossibleMoves.length; i++) {
-                    console.log(king.canMove(allPossibleMoves[i], ai.pieces, user.pieces, 1))
                     
                     if (userKingChecked) {
     
@@ -159,7 +158,7 @@ const ChessBoard = () => {
                 return (
                     <>
                         
-                        <div className="piece"
+                        <div className="piece w-10/12 flex justify-center items-center"
                             id={`piece-${userPieceExists.position}`}
                             onClick={() => user.turn && !winner ? selectPiece(userPieceExists) : undefined }
                         >
@@ -178,7 +177,7 @@ const ChessBoard = () => {
 
             if(aiPieceExists.alive) {
                 return (
-                    <div className="piece">
+                    <div className="piece w-10/12 flex justify-center items-center">
                         <img className={aiPieceExists.type === 'king' && aiPieceExists.checked 
                                 ? 'checked-piece' 
                                 : ''
@@ -432,7 +431,7 @@ const ChessBoard = () => {
                                 }
                             }
                             onClick={(e) => movePiece(e)}
-                        >{box.position}
+                        >
 
                             {checkPieceLocation(box.position)}
                         

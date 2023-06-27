@@ -7,11 +7,11 @@ export default {
   theme: {
     extend: {
       "width": {
-        "screen-1/2": "90vh"
+        "screen-1/2": "min(60vw, 90vh)"
       },
       "height": {
         "screen-1/2": "50vh",
-        "boardHeight": "90vh",
+        "boardHeight": "min(60vw, 90vh)",
       },
       "dropShadow": {
         "selected-piece": "-5px 5px 5px black"
